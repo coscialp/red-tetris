@@ -14,7 +14,12 @@
   ],
   "private": true,
   "dependencies": {
+    "@nestjs/platform-socket.io": "^10.3.3",
     "@nestjs/serve-static": "^4.0.0",
+    "@nestjs/websockets": "^10.3.3",
+    "react-router-dom": "^6.22.0",
+    "sass": "^1.70.0",
+    "socket.io": "^4.7.4",
     "typescript": "^5.3.3"
   }
 }
