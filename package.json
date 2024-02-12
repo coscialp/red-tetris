@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "dev": "npm -w packages/client run dev",
     "build": "npm -w packages run build",
     "start": "npm -w packages/server run start",
     "build-and-start": "npm run build && npm run start",
