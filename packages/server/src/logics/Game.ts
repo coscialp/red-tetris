@@ -2,20 +2,23 @@ import { Piece } from "./Piece";
 import Position from "./Position";
 
 class Game {
-  static defaultPiecePosition: Position = { x: 4, y: 0 };
-
   private _board: bigint[][] = Array(20)
     .fill(0)
     .map(() => Array(10).fill(0x0n));
   private _currentPiece: Piece;
   private _nextPiece: Piece | null = null;
   private _currentPiecePosition: Position;
+  private _numberOfUnavailableLines: number = 0;
 
   constructor(currentPiece: Piece, nextPiece: Piece) {
-    this._currentPiecePosition = { ...Game.defaultPiecePosition };
+    this._currentPiecePosition = this.defaultPiecePosition();
     this._currentPiece = currentPiece;
     this._nextPiece = nextPiece;
   }
+
+  private defaultPiecePosition = () => {
+    return { x: 4, y: this._numberOfUnavailableLines };
+  };
 
   public get board() {
     return this._board;
@@ -87,7 +90,7 @@ class Game {
     });
     this._currentPiece = this._nextPiece!;
     this._nextPiece = null;
-    this._currentPiecePosition = { ...Game.defaultPiecePosition };
+    this._currentPiecePosition = this.defaultPiecePosition();
     this.clearLines();
   };
 
@@ -106,6 +109,17 @@ class Game {
     this.placePiece();
   };
 
+  public increaseUnavailableLines = () => {
+    this._numberOfUnavailableLines += 1;
+    // set color to red in the first _numberOfUnavailableLines
+    this._board = this._board.map((row, index) => {
+      if (index < this._numberOfUnavailableLines) {
+        return row.map(() => 0x646464d9n);
+      }
+      return row;
+    });
+  };
+
   public clearLines = () => {
     const lines = this._board.reduce((acc, row, index) => {
       if (row.every((cell) => cell !== 0x0n)) {
@@ -119,6 +133,40 @@ class Game {
       this._board.unshift(Array(10).fill(0x0n));
     });
   };
+
+  public isGameOver = (): boolean => {
+    return this.isValidPositions(this.piecePositions);
+  };
+
+  public get spectra() {
+    let currentSpectra = this.piecePositions.map((position) => ({
+      x: position.x,
+      y: position.y,
+    }));
+    let nextPosition = currentSpectra.map((position) => ({
+      ...position,
+      y: position.y + 1,
+    }));
+    while (this.isValidPositions(nextPosition)) {
+      currentSpectra = { ...nextPosition };
+      nextPosition = nextPosition.map((position) => ({
+        x: position.x,
+        y: position.y + 1,
+      }));
+    }
+    return currentSpectra;
+  }
+
+  public get previewBoard() {
+    const previewBoard = this._board.map((row) => row.map((cell) => cell));
+    this._currentPiece.position.forEach((position) => {
+      previewBoard[position.y][position.x] = this._currentPiece.color;
+    });
+    this.spectra.forEach((position) => {
+      previewBoard[position.y][position.x] = 0x00ffff1an;
+    });
+    return previewBoard;
+  }
 
   public get visualBoard() {
     return this._board
