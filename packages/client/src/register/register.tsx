@@ -53,7 +53,7 @@ function Home() {
 
   return (
     <>
-      <Tetris />
+      <Tetris socket={socket} />
     </>
   )
 }
