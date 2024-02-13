@@ -110,10 +110,14 @@ class Game {
 
   public increaseUnavailableLines = () => {
     this._numberOfUnavailableLines += 1;
-    // set color to red in the first _numberOfUnavailableLines
     this._board = this._board.map((row, index) => {
       if (index < this._numberOfUnavailableLines) {
-        return row.map(() => 0x646464d9n);
+        return row.map((cell) => {
+          if (cell !== 0x0n) {
+            throw new Error("Game Over");
+          }
+          return 0x646464d9n;
+        });
       }
       return row;
     });
@@ -176,8 +180,6 @@ class Game {
   public printBoard = () => {
     console.log(this.visualBoard);
   };
-
-  //TODO: Add a method to remove the first line of the board
 }
 
 export default Game;
