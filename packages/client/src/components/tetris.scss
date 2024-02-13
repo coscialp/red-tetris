@@ -1,0 +1,32 @@
+.cell {
+  height: 25px;
+  width: 25px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.board {
+  border: 6px solid white;
+  position: relative;
+  left: calc(50vw - (310px / 2));
+}
+
+.square {
+  height: inherit;
+}
+
+.full {
+  border-style: outset;
+  border-width: 5px;
+}
+
+.empty {
+  border: 5px solid transparent;
+}

@@ -17,7 +17,7 @@ class Game {
   }
 
   private defaultPiecePosition = () => {
-    return { x: 4, y: this._numberOfUnavailableLines };
+    return { x: 4, y: this._numberOfUnavailableLines - 1 };
   };
 
   public get board() {
@@ -41,8 +41,7 @@ class Game {
         position.x >= 0 &&
         position.x < 10 &&
         position.y < 20 &&
-        position.y >= 0 &&
-        this._board[position.y][position.x] === 0x0n,
+        (position.y < 0 || this._board[position.y][position.x] === 0x0n),
     );
   };
 
@@ -148,7 +147,7 @@ class Game {
       y: position.y + 1,
     }));
     while (this.isValidPositions(nextPosition)) {
-      currentSpectra = { ...nextPosition };
+      currentSpectra = nextPosition;
       nextPosition = nextPosition.map((position) => ({
         x: position.x,
         y: position.y + 1,
@@ -159,11 +158,11 @@ class Game {
 
   public get previewBoard() {
     const previewBoard = this._board.map((row) => row.map((cell) => cell));
-    this._currentPiece.position.forEach((position) => {
-      previewBoard[position.y][position.x] = this._currentPiece.color;
-    });
     this.spectra.forEach((position) => {
-      previewBoard[position.y][position.x] = 0x00ffff1an;
+      previewBoard[position.y][position.x] = this._currentPiece.color - BigInt(200);
+    });
+    this.piecePositions.forEach((position) => {
+      previewBoard[position.y][position.x] = this._currentPiece.color;
     });
     return previewBoard;
   }

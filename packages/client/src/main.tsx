@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 
 import NotFound from './notFound/404.tsx'
-import Game from './game.tsx';
 import Register from './register/register.tsx';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -20,9 +19,7 @@ function App() {
   return (
     <BrowserRouter>
     <Routes>
-
-      <Route index element={<Register />} />
-      <Route path="/game" element={<Game />}/>
+      <Route path="/" element={<Register />}/>
       <Route path="*" element={<NotFound />}>
       </Route>
     </Routes>

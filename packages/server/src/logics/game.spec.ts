@@ -1,5 +1,5 @@
 import Game from "./Game";
-import { BluePiece, CyanPiece, YellowPiece } from "./VariantPiece";
+import {BluePiece, CyanPiece, OrangePiece, RedPiece, YellowPiece} from "./VariantPiece";
 import {
   boardWithBluePiece,
   boardWithBluePieceAndOneRotation,
@@ -54,14 +54,18 @@ describe("Game", () => {
     game.moveLeft();
     game.moveLeft();
     game.drop();
+    console.log(game.previewBoard);
     game.nextPiece = new YellowPiece();
     game.drop();
+    console.log(game.previewBoard);
     game.nextPiece = new CyanPiece();
     game.moveRight();
     game.moveRight();
+    console.log(game.previewBoard);
     game.moveRight();
     game.moveRight();
     game.drop();
+    console.log(game.previewBoard);
     game.printBoard();
     expect(game.visualBoard).toEqual(boardWithOneClearedLine);
   });

@@ -3,7 +3,7 @@ import { Piece } from "./Piece";
 
 class CyanPiece extends Piece {
   get color(): bigint {
-    return 0x00ffffn;
+    return 0x00ffffffn;
   }
 
   get rotations(): Position[][] {
@@ -38,7 +38,7 @@ class CyanPiece extends Piece {
 
 class BluePiece extends Piece {
   get color(): bigint {
-    return 0x0000ffn;
+    return 0x0000ffffn;
   }
 
   get rotations(): Position[][] {
@@ -73,7 +73,7 @@ class BluePiece extends Piece {
 
 class OrangePiece extends Piece {
   get color(): bigint {
-    return 0xffa500n;
+    return 0xffa500ffn;
   }
 
   get rotations(): Position[][] {
@@ -108,16 +108,16 @@ class OrangePiece extends Piece {
 
 class YellowPiece extends Piece {
   get color(): bigint {
-    return 0xffff00n;
+    return 0xffff00ffn;
   }
 
   get rotations(): Position[][] {
     return [
       [
-        { x: 0, y: 0 },
-        { x: 0, y: 1 },
         { x: 1, y: 1 },
-        { x: 1, y: 0 },
+        { x: 1, y: 2 },
+        { x: 2, y: 2 },
+        { x: 2, y: 1 },
       ],
     ];
   }
@@ -125,7 +125,7 @@ class YellowPiece extends Piece {
 
 class GreenPiece extends Piece {
   get color(): bigint {
-    return 0x00ff00n;
+    return 0x00ff00ffn;
   }
 
   get rotations(): Position[][] {
@@ -160,7 +160,7 @@ class GreenPiece extends Piece {
 
 class RedPiece extends Piece {
   get color(): bigint {
-    return 0xff0000n;
+    return 0xff0000ffn;
   }
 
   get rotations(): Position[][] {
@@ -195,7 +195,7 @@ class RedPiece extends Piece {
 
 class PurplePiece extends Piece {
   get color(): bigint {
-    return 0x800080n;
+    return 0x800080ffn;
   }
 
   get rotations(): Position[][] {
