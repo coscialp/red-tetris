@@ -7,7 +7,7 @@
     "build": "npm -w packages run build",
     "start": "npm -w packages/server run start",
     "build-and-start": "npm run build && npm run start",
-    "test": "npm -w packages run test"
+    "test:server": "npm -w packages/server run test"
   },
   "workspaces": [
     "packages/*"
