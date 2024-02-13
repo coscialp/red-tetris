@@ -1,28 +1,16 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client';
-import './index.css';
+import ReactDOM from "react-dom/client";
+import "./index.css";
 
-import NotFound from './notFound/404.tsx'
-import Game from './game.tsx';
-import Register from './register/register.tsx';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-
-import { io } from 'socket.io-client';
+import NotFound from "./notFound/404.tsx";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./register/register.tsx";
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 function App() {
-  const socket = io(`ws://localhost:3001`, { transports: ['websocket'] });
-
-  socket;
-
-  React;
   return (
     <BrowserRouter>
     <Routes>
-
-      <Route index element={<Register />} />
-      <Route path="/game" element={<Game />}/>
+      <Route index element={<Home />} />
       <Route path="*" element={<NotFound />}>
       </Route>
     </Routes>
