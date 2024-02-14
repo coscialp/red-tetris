@@ -20,7 +20,7 @@ function Tetris({socket}: {socket:any}) {
   console.log(converter(16776986n));
   return (
     <>
-    <button onClick={socket.emit("startGame")}>Start</button>
+    <button onClick={() => socket.emit("startGame")}>Start</button>
     <div className={"board"}>
       {grid.map((row) => (
         <div className={"row"}>
