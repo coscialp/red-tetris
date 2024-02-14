@@ -52,9 +52,10 @@ function Home() {
   });
 
   return (
-    <>
-      <Tetris socket={socket} />
-    </>
+    <div className={"main-window"}>
+      <button className={"btn-start"} onClick={() => {socket!.emit("startGame")}}>Start</button>
+      <Tetris socket={socket}/>
+    </div>
   )
 }
 

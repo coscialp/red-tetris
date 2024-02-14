@@ -8,3 +8,43 @@
 .title {
     color: #d2afff;
 }
+
+.main-window {
+    width: 100vw;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: center;
+    align-items: center;
+}
+
+button.btn-start {
+  height: fit-content;
+  border-width: 3px;
+  margin: 5px;
+  grid-column: 1;
+  animation: linear 7s infinite border-color-anim;
+}
+
+@keyframes border-color-anim {
+  0% {
+    border-color: #25d3d3;
+  }
+  12% {
+    border-color: #fda931;
+  }
+  25% {
+    border-color: #fefd40;
+  }
+  50% {
+    border-color: #15fc36;
+  }
+  75% {
+    border-color: #1b29f9;
+  }
+  87% {
+    border-color: #9a2cfa;
+  }
+  100% {
+     border-color: #25d3d3;
+   }
+}
