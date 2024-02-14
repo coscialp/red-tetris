@@ -112,7 +112,7 @@ class Game {
   };
 
   public drop = () => {
-    if (this.isGameOver()) {
+    if (this.isGameOver() || !this._nextPiece) {
       return;
     }
     let nextPosition = this.piecePositions.map((position) => ({
@@ -127,6 +127,7 @@ class Game {
       }));
     }
     this.placePiece();
+    console.log("Dropped");
   };
 
   public increaseUnavailableLines = () => {
@@ -188,8 +189,10 @@ class Game {
   public get previewBoard() {
     const previewBoard = this._board.map((row) => row.map((cell) => cell));
     this.shadow.forEach((position) => {
-      previewBoard[position.y][position.x] =
-        this._currentPiece.color - BigInt(200);
+      if (position.y >= 0) {
+        previewBoard[position.y][position.x] =
+          this._currentPiece.color - BigInt(200);
+      }
     });
     this.piecePositions.forEach((position) => {
       if (position.y >= 0) {
