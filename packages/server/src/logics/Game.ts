@@ -162,28 +162,32 @@ class Game {
     return !this.isValidPositions(this.piecePositions);
   };
 
-  public get spectra() {
-    let currentSpectra = this.piecePositions.map((position) => ({
+  public get shadow() {
+    let currentShadow = this.piecePositions.map((position) => ({
       x: position.x,
       y: position.y,
     }));
-    let nextPosition = currentSpectra.map((position) => ({
+    let nextPosition = currentShadow.map((position) => ({
       ...position,
       y: position.y + 1,
     }));
     while (this.isValidPositions(nextPosition)) {
-      currentSpectra = nextPosition;
+      currentShadow = nextPosition;
       nextPosition = nextPosition.map((position) => ({
         x: position.x,
         y: position.y + 1,
       }));
     }
-    return currentSpectra;
+    return currentShadow;
+  }
+
+  public get spectra() {
+    return this._board.map((row) => row.map((cell) => cell));
   }
 
   public get previewBoard() {
     const previewBoard = this._board.map((row) => row.map((cell) => cell));
-    this.spectra.forEach((position) => {
+    this.shadow.forEach((position) => {
       previewBoard[position.y][position.x] =
         this._currentPiece.color - BigInt(200);
     });

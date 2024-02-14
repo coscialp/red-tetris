@@ -94,6 +94,19 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       ),
     );
     while (true) {
+      const mapBoard = [];
+      for (const player of players) {
+        const previewString = player.game.previewBoard.map((row) =>
+          row.map((cell) => {
+            let colorString = cell.toString(16);
+            while (colorString.length < 8) {
+              colorString = "0" + colorString;
+            }
+            return colorString;
+          }),
+        );
+        mapBoard.push({ name: player.name, map: previewString });
+      }
       for (const player of players) {
         if (player.game.nextPiece === null) {
           player.game.nextPiece = PieceFactory.createRandomPiece();
@@ -102,6 +115,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
           player.socket.emit("gameOver");
           players = players.filter((p) => p.name !== player.name);
         }
+        player.socket.emit("spectraBoard", mapBoard);
       }
 
       if (players.length === 0) {
