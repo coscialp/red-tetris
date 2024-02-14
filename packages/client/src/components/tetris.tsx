@@ -1,21 +1,19 @@
-import './tetris.scss';
+import "./tetris.scss";
 import {useEffect, useState} from "react";
 
 
 function Tetris({socket}: {socket:any}) {
-  const [grid, setGrid] = useState<bigint[][]>([]);
+  //const grid = Array.from(Array(20), () => new Array(10).fill(Math.floor(Math.random() * 2)));
+  const [grid, setGrid] = useState<string[][]>([]);
 
   socket.on('previewBoard', (data: any) => {
-    setGrid(data);
+    setGrid(data.board);
   });
 
-  const converter = (color: bigint) => {
-    let colorString = color.toString(16);
-    while (colorString.length < 8) {
-      colorString = '0' + colorString;
-    }
-    return colorString;
-  }
+  socket.on("gameOver", () => {
+    alert("Game Over");
+  });
+
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -58,94 +56,6 @@ function Tetris({socket}: {socket:any}) {
   }, []);
 
   if (grid.length === 0) {
-    setGrid([
-      [
-        0n,        0n,
-        0n,        0n,
-        16777215n, 16777215n,
-        16777215n, 16777215n,
-        0n,        0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        0n, 0n, 0n, 0n, 0n,
-        0n, 0n, 0n, 0n, 0n
-      ],
-      [
-        16777215n, 16777215n,
-        16777215n, 16777215n,
-        16777015n, 16777015n,
-        16777015n, 16777015n,
-        0n,        0n
-      ]
-    ])
     return (
       <>
         <p>Loading...</p>
@@ -155,18 +65,15 @@ function Tetris({socket}: {socket:any}) {
 
   return (
     <>
-      <div className={"board"}>
-        {grid.map((row) => (
-          <div className={"row"}>
-            {row.map((cell) => (
-              <div className={cell === 0n ? "cell empty" : "cell full"} style={cell !== 0n ? {
-                backgroundColor: `#${converter(cell - BigInt(50))}`,
-                borderColor: `#${converter(cell)}`
-              } : {}}/>
-            ))}
-          </div>
-        ))}
-      </div>
+    <div className={"board"}>
+      {grid.map((row) => (
+        <div className={"row"}>
+          {row.map((cell) => (
+            <div className={cell === "00000000" ? "cell empty" : "cell full"} style={cell !== "00000000" ? {backgroundColor: `#${cell}`, borderColor: `#${cell}`} : {}}/>
+          ))}
+        </div>
+      ))}
+    </div>
     </>
   );
 }
