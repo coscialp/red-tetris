@@ -20,7 +20,7 @@ function Home() {
       setRoom(matches[1]);
       setUsername(matches[2])
 
-      setSocket(io(`ws://localhost:3001`, { transports: ['websocket'] }));
+      setSocket(io(`ws://${import.meta.env.VITE_BACK_BASE_URL}:3001`, { transports: ['websocket'] }));
     }
     else {
       console.log("Invalid URL");

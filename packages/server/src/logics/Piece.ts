@@ -21,6 +21,14 @@ abstract class Piece {
     return this.rotations[this._rotation];
   }
 
+  static hexaColor(color: bigint): string {
+    let hexaColor = color.toString(16);
+    while (hexaColor.length < 8) {
+      hexaColor = "0" + hexaColor;
+    }
+    return hexaColor;
+  }
+
   get nextRotation(): Position[] {
     return this.rotations[(this._rotation + 1) % this.rotations.length];
   }
