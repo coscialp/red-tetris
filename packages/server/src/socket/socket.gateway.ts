@@ -66,7 +66,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     player.socket.emit("previewBoard", {
       board: previewString,
     });
-  }
+  };
 
   @SubscribeMessage("startGame")
   async handleStartGame(@ConnectedSocket() socket: Socket): Promise<void> {
@@ -113,7 +113,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       });
 
       players.forEach((player) => player.game.moveDown());
-      await this.sleep(200);
+      await this.sleep(500);
     }
   }
 
