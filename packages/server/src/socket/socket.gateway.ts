@@ -52,6 +52,22 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+  private emitPreviewBoard = (player: Player) => {
+    const previewString = player.game.previewBoard.map((row) =>
+      row.map((cell) => {
+        let colorString = cell.toString(16);
+        while (colorString.length < 8) {
+          colorString = "0" + colorString;
+        }
+        return colorString;
+      }),
+    );
+
+    player.socket.emit("previewBoard", {
+      board: previewString,
+    });
+  }
+
   @SubscribeMessage("startGame")
   async handleStartGame(@ConnectedSocket() socket: Socket): Promise<void> {
     const currentPlayer = this._clients.get(socket.id);
@@ -93,19 +109,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       players.forEach((player) => {
-        const previewString = player.game.previewBoard.map((row) =>
-          row.map((cell) => {
-            let colorString = cell.toString(16);
-            while (colorString.length < 8) {
-              colorString = "0" + colorString;
-            }
-            return colorString;
-          }),
-        );
-
-        player.socket.emit("previewBoard", {
-          board: previewString,
-        });
+        this.emitPreviewBoard(player);
       });
 
       players.forEach((player) => player.game.moveDown());
@@ -125,6 +129,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new Error("Player not in game");
     }
     player.game.rotate();
+    this.emitPreviewBoard(player);
   }
 
   @SubscribeMessage("moveLeft")
@@ -139,6 +144,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new Error("Player not in game");
     }
     player.game.moveLeft();
+    this.emitPreviewBoard(player);
   }
 
   @SubscribeMessage("moveRight")
@@ -153,6 +159,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new Error("Player not in game");
     }
     player.game.moveRight();
+    this.emitPreviewBoard(player);
   }
 
   @SubscribeMessage("moveDown")
@@ -167,6 +174,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new Error("Player not in game");
     }
     player.game.moveDown();
+    this.emitPreviewBoard(player);
   }
 
   @SubscribeMessage("drop")
@@ -181,6 +189,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new Error("Player not in game");
     }
     player.game.drop();
+    this.emitPreviewBoard(player);
   }
 
   @SubscribeMessage("increaseUnavailableLines")
@@ -195,6 +204,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     players.forEach((player) => {
       if (player.name !== this._clients.get(socket.id).name) {
         player.game.increaseUnavailableLines();
+        this.emitPreviewBoard(player);
       }
     });
   }

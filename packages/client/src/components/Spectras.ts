@@ -1,3 +1,3 @@
-function Spectras({socket}: {socket:any}) {
+/*function Spectras({socket}: {socket:any}) {
 
-}
+}*/

@@ -16,7 +16,7 @@ function Tetris({socket}: {socket:any}) {
 
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: DocumentEventMap["keydown"]) => {
       const key = e.key;
 
       switch (key) {
