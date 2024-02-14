@@ -24,6 +24,10 @@ class Game {
     return this._board;
   }
 
+  public get nextPiece() {
+    return this._nextPiece;
+  }
+
   public set nextPiece(piece: Piece) {
     this._nextPiece = piece;
   }
@@ -79,8 +83,9 @@ class Game {
     }));
     if (this.isValidPositions(nextPosition)) {
       this._currentPiecePosition.y += 1;
+    } else {
+      this.placePiece();
     }
-    this.placePiece();
   };
 
   public placePiece = () => {
@@ -138,7 +143,7 @@ class Game {
   };
 
   public isGameOver = (): boolean => {
-    return this.isValidPositions(this.piecePositions);
+    return !this.isValidPositions(this.piecePositions);
   };
 
   public get spectra() {
@@ -163,10 +168,13 @@ class Game {
   public get previewBoard() {
     const previewBoard = this._board.map((row) => row.map((cell) => cell));
     this.spectra.forEach((position) => {
-      previewBoard[position.y][position.x] = this._currentPiece.color - BigInt(200);
+      previewBoard[position.y][position.x] =
+        this._currentPiece.color - BigInt(200);
     });
     this.piecePositions.forEach((position) => {
-      previewBoard[position.y][position.x] = this._currentPiece.color;
+      if (position.y >= 0) {
+        previewBoard[position.y][position.x] = this._currentPiece.color;
+      }
     });
     return previewBoard;
   }

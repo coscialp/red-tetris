@@ -44,27 +44,30 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() body: any,
   ): void {
     if (!this._rooms.has(body.room)) {
-      this._rooms.set(body.room, body.name);
+      this._rooms.set(body.room, body.username);
     }
-    this._clients.set(socket.id, new Player(body.name, socket, body.room));
+    this._clients.set(socket.id, new Player(body.username, socket, body.room));
     console.log(`Client ${body.username} joined game with id: ${body.room}`);
   }
 
+  private sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
   @SubscribeMessage("startGame")
-  handleStartGame(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() body: any,
-  ): void {
-    if (!this._rooms.has(body.room)) {
+  async handleStartGame(@ConnectedSocket() socket: Socket): Promise<void> {
+    const currentPlayer = this._clients.get(socket.id);
+    if (!currentPlayer) {
+      throw new Error("Player not found");
+    }
+    if (!this._rooms.has(currentPlayer.room)) {
       throw new Error("Room not found");
     }
 
-    if (this._rooms.get(body.room) !== body.name) {
+    if (this._rooms.get(currentPlayer.room) !== currentPlayer.name) {
       throw new Error("You are not the owner of the room");
     }
 
     let players = Array.from(this._clients.values()).filter(
-      (player) => player.room === body.room,
+      (player) => player.room === currentPlayer.room,
     );
     players.forEach((player) =>
       player.startGame(
@@ -76,6 +79,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
     while (true) {
       for (const player of players) {
+        if (player.game.nextPiece === null) {
+          player.game.nextPiece = PieceFactory.createRandomPiece();
+        }
         if (player.game.isGameOver()) {
           player.socket.emit("gameOver");
           players = players.filter((p) => p.name !== player.name);
@@ -83,16 +89,27 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       if (players.length === 0) {
-        break;
+        return;
       }
 
-      players.forEach((player) =>
-        player.socket.emit("previewBoard", { board: player.game.previewBoard }),
-      );
+      players.forEach((player) => {
+        const previewString = player.game.previewBoard.map((row) =>
+          row.map((cell) => {
+            let colorString = cell.toString(16);
+            while (colorString.length < 8) {
+              colorString = "0" + colorString;
+            }
+            return colorString;
+          }),
+        );
 
-      setTimeout(() => {
-        players.forEach((player) => player.game.moveDown());
-      }, 500);
+        player.socket.emit("previewBoard", {
+          board: previewString,
+        });
+      });
+
+      players.forEach((player) => player.game.moveDown());
+      await this.sleep(200);
     }
   }
 
