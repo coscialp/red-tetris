@@ -11,8 +11,9 @@ function NextPiece({socket}: {socket:any}) {
 
   if (nextPiece.length === 0) {
     setNextPiece([
-      ["FFFFFFC8", "00000000"],
-      ["00000000", "FFFFFFFF"],
+      ["FFFFFFFF", "00000000", "00000000"],
+      ["FFFFFFFF", "FFFFFFFF", "FFFFFFFF"],
+
     ]);
   }
 
@@ -20,7 +21,8 @@ function NextPiece({socket}: {socket:any}) {
     <>
       <div className={"next-piece"}>
         {nextPiece.map((row) => (
-          <div className={"row"} style={{gridTemplateColumns: `repeat(${row.length}, 1fr)`}}>
+          <div className={"row"} style={{gridTemplateColumns: `repeat(${row.length}, 1fr)`,
+            height: `calc(100px / ${row.length})`}}>
             {row.map((cell) => (
               <div className={cell === "00000000" ? "cell empty" : "cell full"} style={cell !== "00000000" ? {backgroundColor: `#${cell}`, borderColor: `#${cell}`} : {}}/>
             ))}

@@ -96,7 +96,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     while (true) {
       const mapBoard = [];
       for (const player of players) {
-        const previewString = player.game.previewBoard.map((row) =>
+        const previewString = player.game.spectra.map((row) =>
           row.map((cell) => {
             let colorString = cell.toString(16);
             while (colorString.length < 8) {
@@ -127,7 +127,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       });
 
       players.forEach((player) => player.game.moveDown());
-      await this.sleep(200);
+      await this.sleep(1000);
     }
   }
 

@@ -69,7 +69,7 @@ function Tetris({socket}: {socket:any}) {
       {grid.map((row) => (
         <div className={"row"}>
           {row.map((cell) => (
-            <div className={cell === "00000000" ? "cell empty" : "cell full"} style={cell !== "00000000" ? {backgroundColor: `#${cell}`, borderColor: `#${cell}`} : {}}/>
+            <div className={cell === "00000000" ? "cell empty" : "cell full"} style={cell !== "00000000" ? {backgroundColor: `#${cell}`.slice(0, -2) + "C8", borderColor: `#${cell}`} : {}}/>
           ))}
         </div>
       ))}

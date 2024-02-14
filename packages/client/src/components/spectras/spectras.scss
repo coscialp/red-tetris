@@ -1,0 +1,17 @@
+.spectras {
+  display: grid;
+  justify-content: flex-start;
+  grid-template-columns: repeat(3, 1fr);
+  overflow-y: scroll;
+  padding: 5px;
+  border-radius: 5px;
+  border: 3px solid aqua;
+}
+
+.spectra {
+  border: 1px solid aqua;
+  border-radius: 5px;
+  height: 200px;
+  width: 100px;
+  margin: 2px;
+}
