@@ -1,7 +1,8 @@
-import "./register.scss";
+import "./mainWindow.scss";
 import { io, Socket } from "socket.io-client";
 import { useEffect, useState } from "react";
 import Tetris from "../components/tetris.tsx";
+import NextPiece from "../components/nextPiece/nextPiece.tsx";
 
 function Home() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -55,6 +56,7 @@ function Home() {
     <div className={"main-window"}>
       <button className={"btn-start"} onClick={() => {socket!.emit("startGame")}}>Start</button>
       <Tetris socket={socket}/>
+      <NextPiece socket={socket} />
     </div>
   )
 }

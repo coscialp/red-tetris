@@ -3,7 +3,7 @@ import "./index.css";
 
 import NotFound from "./notFound/404.tsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./register/register.tsx";
+import Home from "./mainWindow/mainWindow.tsx";
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 function App() {
