@@ -6,14 +6,18 @@ function Tetris({socket}: {socket:any}) {
   //const grid = Array.from(Array(20), () => new Array(10).fill(Math.floor(Math.random() * 2)));
   const [grid, setGrid] = useState<string[][]>([]);
 
-  socket.on('previewBoard', (data: any) => {
-    setGrid(data.board);
-  });
 
-  socket.on("gameOver", () => {
-    console.log("Receiving Game Over");
-    alert("Game Over");
-  });
+
+  useEffect(() => {
+    socket.on('previewBoard', (data: any) => {
+      setGrid(data.board);
+    });
+
+    socket.on("gameOver", () => {
+      console.log("Receiving Game Over");
+      alert("Game Over");
+    });
+  }, []);
 
   const darkenColor = (color: string) => {
     return chroma("#" + color).darken(0.3).hex();
