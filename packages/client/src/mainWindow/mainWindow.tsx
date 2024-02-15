@@ -10,6 +10,7 @@ function Home() {
   const [isError, setIsError] = useState(false);
   const [room, setRoom] = useState("");
   const [username, setUsername] = useState("");
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     const url = window.location.href;
@@ -53,13 +54,21 @@ function Home() {
     console.log("Disconnected from server");
   });
 
+  socket.on("gameStarted", () => {
+    setIsPlaying(true);
+  });
+
   return (
     <div className={"main-window"}>
-      <button className={"btn-start"} onClick={() => {socket!.emit("startGame")}}>Start</button>
+      {
+        !isPlaying ? <button className={"btn-start"} onClick={() => {
+          socket!.emit("startGame");
+        }}>Start</button> : null
+      }
       <Tetris socket={socket}/>
       <div className={"right-panel"}>
-        <NextPiece socket={socket} />
-        <Spectras socket={socket} />
+        <NextPiece socket={socket}/>
+        <Spectras socket={socket} name={username} />
       </div>
     </div>
   )

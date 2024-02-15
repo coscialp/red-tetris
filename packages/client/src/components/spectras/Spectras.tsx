@@ -1,7 +1,7 @@
 import {useState} from "react";
 import "./spectras.scss";
 
-function Spectras({socket}: {socket:any}) {
+function Spectras({socket, name}: {socket:any, name: string}) {
 
   const [spectras, setSpectras] = useState<{name: string, map: string[][]}[]>();
 
@@ -9,22 +9,37 @@ function Spectras({socket}: {socket:any}) {
     setSpectras(data);
   });
 
+  console.log(spectras);
+  if (!spectras || spectras.length === 1) {
+    return (
+      <>
+      </>
+    )
+  }
 
   return(
     <>
       <div className={"spectras"}>
-        {spectras?.map((spectra) => (
-          <div className={"spectra"}>
-            {spectra.map.map((row) => (
-              <div className={"row"} style={{gridTemplateColumns: `repeat(${row.length}, 1fr)`,
-                height: `calc(100px / ${row.length})`}}>
-                {row.map((cell) => (
-                  <div className={cell === "00000000" ? "cell empty" : "cell full"} style={cell !== "00000000" ? {backgroundColor: `#${cell}`, borderColor: `#${cell}`} : {}}/>
-                ))}
-              </div>
-            ))}
-          </div>
-        ))}
+        {spectras?.map((spectra) => {
+          if (spectra.name !== name) {
+          return (
+            <div className={"spectra"}>
+              {spectra.map.map((row) => (
+                <div className={"row"} style={{
+                  gridTemplateColumns: `repeat(${row.length}, 1fr)`,
+                  height: `calc(100px / ${row.length})`
+                }}>
+                  {row.map((cell) => (
+                    <div className={cell === "00000000" ? "cell empty" : "cell full"}
+                         style={cell !== "00000000" ? {backgroundColor: `#${cell}`, borderColor: `#${cell}`} : {}}/>
+                  ))}
+                </div>
+              ))}
+              <div className={"spectra-username"}>{spectra.name}</div>
+            </div>
+          )
+          }
+        })}
       </div>
     </>
   );

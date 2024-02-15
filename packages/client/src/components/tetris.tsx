@@ -6,8 +6,6 @@ function Tetris({socket}: {socket:any}) {
   //const grid = Array.from(Array(20), () => new Array(10).fill(Math.floor(Math.random() * 2)));
   const [grid, setGrid] = useState<string[][]>([]);
 
-
-
   useEffect(() => {
     socket.on('previewBoard', (data: any) => {
       setGrid(data.board);

@@ -102,6 +102,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new Error("You are not the owner of the room");
     }
 
+    this.server.emit("gameStarted");
+
     let players = Array.from(this._clients.values()).filter(
       (player) => player.room === currentPlayer.room,
     );

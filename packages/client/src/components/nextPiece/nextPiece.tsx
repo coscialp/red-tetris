@@ -3,18 +3,16 @@ import "./nextPiece.scss";
 
 function NextPiece({socket}: {socket:any}) {
 
-  const [nextPiece, setNextPiece] = useState<string[][]>([]);
+  const [nextPiece, setNextPiece] = useState<string[][]>();
 
   socket.on('nextPiece', (data: any) => {
-    console.log(data.nextPiece);
     setNextPiece(data.nextPiece);
 
   });
 
-  if (nextPiece.length === 0) {
+  if (!nextPiece || nextPiece.length === 0) {
     return (
       <>
-        <p>Loading...</p>
       </>
     )
   }
