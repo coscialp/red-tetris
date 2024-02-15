@@ -12,15 +12,6 @@ import Player from "../logics/Player";
 import Game from "../logics/Game";
 import { PieceFactory } from "../logics/factory";
 import { Piece } from "src/logics/Piece";
-import {
-  BluePiece,
-  CyanPiece,
-  GreenPiece,
-  OrangePiece,
-  PurplePiece,
-  RedPiece,
-  YellowPiece,
-} from "src/logics/VariantPiece";
 
 @WebSocketGateway(3001, { transports: ["websocket"] })
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -56,7 +47,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ): void {
     let isValid = true;
     if (!this._rooms.has(body.room)) {
-      this._rooms.set(body.room, body.username);
+      this._rooms.set(body.room, {
+        owner: body.username,
+        pieces: PieceFactory.createBagPieces(),
+      });
     }
     const players = Array.from(this._clients.values()).filter(
       (player) => player.room === body.room,
@@ -77,7 +71,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`Client ${body.username} joined game with id: ${body.room}`);
   }
 
-  private sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  private sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
   emitPreviewBoard = (player: Player) => {
     const previewString = player.game.previewBoard.map((row) =>
@@ -104,7 +98,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new Error("Room not found");
     }
 
-    if (this._rooms.get(currentPlayer.room.owner) !== currentPlayer.name) {
+    if (this._rooms.get(currentPlayer.room).owner !== currentPlayer.name) {
       throw new Error("You are not the owner of the room");
     }
 
@@ -112,17 +106,16 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       (player) => player.room === currentPlayer.room,
     );
     players.forEach((player) => {
-        player.startGame(
-          new Game(
-            PieceFactory.createRandomPiece(),
-            PieceFactory.createRandomPiece(),
-          ),
-        );
+      player.startGame(
+        new Game(
+          this._rooms.get(currentPlayer.room).pieces[0],
+          this._rooms.get(currentPlayer.room).pieces[1],
+        ),
+      );
       player.socket.emit("nextPiece", {
         nextPiece: player.game.nextPiece.nextPiecePreview,
       });
-      }
-    );
+    });
     while (true) {
       const mapBoard = [];
       for (const player of players) {
@@ -135,11 +128,21 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
             return colorString;
           }),
         );
+        if (
+          player.game.nbPiecePlaced >=
+          this._rooms.get(currentPlayer.room).pieces.length / 2
+        ) {
+          this._rooms.get(currentPlayer.room).pieces = this._rooms
+            .get(currentPlayer.room)
+            .pieces.concat(PieceFactory.createBagPieces());
+        }
         mapBoard.push({ name: player.name, map: previewString });
       }
       for (const player of players) {
         if (player.game.nextPiece === null) {
-          player.game.nextPiece = PieceFactory.createRandomPiece();
+          player.game.nextPiece = this._rooms.get(currentPlayer.room).pieces[
+            currentPlayer.game.nbPiecePlaced + 2
+          ];
           player.game.nextPieceArray;
           player.socket.emit("nextPiece", {
             nextPiece: player.game.nextPiece.nextPiecePreview,

@@ -12,8 +12,8 @@ class Game {
   private _nbPiecePlaced: number = 0;
   constructor(currentPiece: Piece, nextPiece: Piece) {
     this._currentPiecePosition = this.defaultPiecePosition();
-    this._currentPiece = currentPiece;
-    this._nextPiece = nextPiece;
+    this._currentPiece = currentPiece.clone();
+    this._nextPiece = nextPiece.clone();
   }
 
   public get nbPiecePlaced() {
@@ -42,7 +42,7 @@ class Game {
   }
 
   public set nextPiece(piece: Piece) {
-    this._nextPiece = piece;
+    this._nextPiece = piece.clone();
   }
 
   public get piecePositions(): Position[] {
@@ -115,6 +115,7 @@ class Game {
       }
       this._board[position.y][position.x] = this._currentPiece.color;
     });
+    this._nbPiecePlaced += 1;
     this._currentPiece = this._nextPiece!;
     this._nextPiece = null;
     this._currentPiecePosition = this.defaultPiecePosition();

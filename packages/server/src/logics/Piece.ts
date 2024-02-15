@@ -21,6 +21,8 @@ abstract class Piece {
     return this.rotations[this._rotation];
   }
 
+  abstract clone(): Piece;
+
   static hexaColor(color: bigint): string {
     let hexaColor = color.toString(16);
     while (hexaColor.length < 8) {
