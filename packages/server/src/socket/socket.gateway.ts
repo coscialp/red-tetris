@@ -68,7 +68,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  private emitPreviewBoard = (player: Player) => {
+  emitPreviewBoard = (player: Player) => {
     const previewString = player.game.previewBoard.map((row) =>
       row.map((cell) => {
         let colorString = cell.toString(16);

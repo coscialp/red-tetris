@@ -1,6 +1,6 @@
-import { Piece, pieceColors } from "./Piece";
-import { PieceFactory } from "./factory";
-import { BluePiece, CyanPiece } from "./VariantPiece";
+import { Piece, pieceColors } from "../Piece";
+import { PieceFactory } from "../factory";
+import { BluePiece, CyanPiece } from "../VariantPiece";
 
 describe("PieceFactory", () => {
   it("should create a cyan piece", () => {
