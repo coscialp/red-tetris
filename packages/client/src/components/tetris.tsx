@@ -1,6 +1,6 @@
 import "./tetris.scss";
-import { useEffect, useState } from "react";
-
+import {useEffect, useState} from "react";
+import chroma from "chroma-js";
 
 function Tetris({socket}: {socket:any}) {
   //const grid = Array.from(Array(20), () => new Array(10).fill(Math.floor(Math.random() * 2)));
@@ -14,6 +14,9 @@ function Tetris({socket}: {socket:any}) {
     alert("Game Over");
   });
 
+  const darkenColor = (color: string) => {
+    return chroma("#" + color).darken(0.3).hex();
+  }
 
   useEffect(() => {
     const handleKeyDown = (e: DocumentEventMap["keydown"]) => {
@@ -60,7 +63,7 @@ function Tetris({socket}: {socket:any}) {
       {grid.map((row) => (
         <div className={"row"}>
           {row.map((cell) => (
-            <div className={cell === "00000000" ? "cell empty" : "cell full"} style={cell !== "00000000" ? {backgroundColor: `#${cell}`.slice(0, -2) + "C8", borderColor: `#${cell}`} : {}}/>
+            <div className={cell === "00000000" ? "cell empty" : "cell full"} style={cell !== "00000000" ? {backgroundColor: `${darkenColor(cell)}`, borderColor: `#${cell}`} : {}}/>
           ))}
         </div>
       ))}

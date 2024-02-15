@@ -6,15 +6,17 @@ function NextPiece({socket}: {socket:any}) {
   const [nextPiece, setNextPiece] = useState<string[][]>([]);
 
   socket.on('nextPiece', (data: any) => {
+    console.log(data.nextPiece);
     setNextPiece(data.nextPiece);
+
   });
 
   if (nextPiece.length === 0) {
-    setNextPiece([
-      ["FFFFFFFF", "00000000", "00000000"],
-      ["FFFFFFFF", "FFFFFFFF", "FFFFFFFF"],
-
-    ]);
+    return (
+      <>
+        <p>Loading...</p>
+      </>
+    )
   }
 
   return (

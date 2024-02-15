@@ -46,9 +46,6 @@ class Game {
   }
 
   public get piecePositions(): Position[] {
-    if (!this._currentPiece) {
-      return [];
-    }
     return this._currentPiece.position.map((position) => ({
       x: position.x + this._currentPiecePosition.x,
       y: position.y + this._currentPiecePosition.y,
