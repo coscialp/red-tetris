@@ -12,6 +12,7 @@ function Home() {
   const [owner, setOwner] = useState("");
   const [username, setUsername] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
+  const [startLabel, setStartLabel] = useState("Start");
 
   useEffect(() => {
     const url = window.location.href;
@@ -63,12 +64,17 @@ function Home() {
     setIsPlaying(true);
   });
 
+  socket.on("gameFinished", () => {
+    setIsPlaying(false);
+    setStartLabel("Restart");
+  });
+
   return (
     <div className={"main-window"}>
       {
         !isPlaying && owner === username ? <button className={"btn-start"} onClick={() => {
           socket!.emit("startGame");
-        }}>Start</button> : <div></div>
+        }}>{startLabel}</button> : <div></div>
       }
       <Tetris socket={socket} me={username} owner={owner}/>
       <div className={"right-panel"}>

@@ -9,11 +9,13 @@
 }
 
 .board {
-  border: 6px solid white;
+  border-width: 6px;
+  border-style: solid;
   grid-column: 2;
   height: 600px;
   width: 300px;
   display: grid;
+  animation: linear 7s infinite border-color-anim;
 }
 
 .square {

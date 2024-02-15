@@ -5,12 +5,16 @@
   overflow-y: scroll;
   padding: 5px;
   border-radius: 5px;
-  border: 3px solid aqua;
+  border-width: 3px;
+  border-style: solid;
   max-height: 60%;
+  animation: linear 7s infinite border-color-anim;
 }
 
 .spectra {
-  border: 1px solid aqua;
+  border-width: 1px;
+  border-style: solid;
+  animation: linear 7s infinite border-color-anim;
   border-radius: 5px;
   height: fit-content;
   width: 100px;

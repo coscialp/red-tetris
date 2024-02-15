@@ -14,6 +14,10 @@ function Tetris({socket, me, owner}: {socket:any, me: string, owner: string}) {
     socket.on("gameOver", () => {
       alert("Game Over");
     });
+
+    socket.on("winner", () => {
+      alert("You won !");
+    });
   }, []);
 
   const darkenColor = (color: string) => {

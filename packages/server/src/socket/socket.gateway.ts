@@ -165,10 +165,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
     while (true) {
       const mapBoard = [];
-      if (players.length === 0) {
-        this._rooms.get(currentPlayer.room).status = "waiting";
-        return;
-      }
       for (const player of players) {
         const previewString = player.game.spectra.map((row) =>
           row.map((cell) => {
@@ -215,6 +211,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       if (players.length === 0) {
+        socket.emit("gameFinished");
+        this._rooms.get(currentPlayer.room).status = "waiting";
         return;
       }
 
