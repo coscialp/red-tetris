@@ -22,7 +22,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     { owner: string; pieces: Piece[]; status: string }
   > = new Map();
   private _clients: Map<string, Player> = new Map();
-  private _pieceBag: Piece[] = [];
 
   handleConnection(@ConnectedSocket() socket: Socket): void {
     console.log("Client connected with id: ", socket.id);
