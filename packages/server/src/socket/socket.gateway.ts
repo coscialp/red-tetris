@@ -43,10 +43,26 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: any,
   ): void {
+    let isValid = true;
     if (!this._rooms.has(body.room)) {
       this._rooms.set(body.room, body.username);
     }
-    this._clients.set(socket.id, new Player(body.username, socket, body.room));
+    const players = Array.from(this._clients.values()).filter(
+      (player) => player.room === body.room,
+    );
+    for (const player of players) {
+      if (player.name === body.username) {
+        isValid = false;
+        console.log(
+          `Client ${body.username} can't join a user with same username is already in game`,
+        );
+      }
+    }
+    if (isValid)
+      this._clients.set(
+        socket.id,
+        new Player(body.username, socket, body.room),
+      );
     console.log(`Client ${body.username} joined game with id: ${body.room}`);
   }
 
@@ -110,6 +126,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       for (const player of players) {
         if (player.game.nextPiece === null) {
           player.game.nextPiece = PieceFactory.createRandomPiece();
+          player.game.nextPieceArray;
+          player.socket.emit("nextPiece", {
+            nextPiece: player.game.nextPiece.nextPiecePreview,
+          });
+          console.log(player.game.nextPiece.nextPiecePreview);
         }
         if (player.game.isGameOver()) {
           player.socket.emit("gameOver");

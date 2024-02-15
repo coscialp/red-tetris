@@ -20,6 +20,11 @@ class Game {
     return { x: 4, y: this._numberOfUnavailableLines - 1 };
   };
 
+  public get nextPieceArray() {
+    console.log(this.nextPiece.color);
+    return this.nextPiece.nextPiecePreview;
+  }
+
   public get board() {
     return this._board;
   }
