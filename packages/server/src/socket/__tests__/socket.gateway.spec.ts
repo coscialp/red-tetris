@@ -51,13 +51,14 @@ describe("SocketGateway", () => {
 
   it("should handle get room by owner", () => {
     jest.spyOn(socketMock, "emit");
+    gateway["_rooms"].set("room", { owner: "owner", pieces: [], status: "status" });
     gateway.handleGetRoomByOwner(socketMock, { room: "room" });
-    expect(socketMock.emit).toBeCalledWith("owner", { owner: undefined });
+    expect(socketMock.emit).toBeCalledWith("owner", { owner: "owner" });
   });
 
   it("should handle join game", () => {
     gateway.handleJoinGame(socketMock, { room: "room", username: "username" });
-    expect(gateway["_rooms"].get("room")).toEqual("username");
+    expect(gateway["_rooms"].get("room").owner).toEqual("username");
     expect(gateway["_clients"].get("1")).toBeDefined();
   });
 

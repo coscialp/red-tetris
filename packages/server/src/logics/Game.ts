@@ -63,12 +63,11 @@ class Game {
   };
 
   public rotate = () => {
-    const nextRotation = this._currentPiece.nextRotation;
-    const realNextRotation = nextRotation.map((position) => ({
+    const nextRotation = this._currentPiece.nextRotation.map((position) => ({
       x: position.x + this._currentPiecePosition.x,
       y: position.y + this._currentPiecePosition.y,
     }));
-    if (this.isValidPositions(realNextRotation)) {
+    if (this.isValidPositions(nextRotation)) {
       this._currentPiece.rotate();
     }
   };
@@ -94,13 +93,16 @@ class Game {
   };
 
   public moveDown = (): number => {
+    let isChanged = false;
     const nextPosition = this.piecePositions.map((position) => ({
       x: position.x,
       y: position.y + 1,
     }));
     if (this.isValidPositions(nextPosition)) {
+      isChanged = true;
       this._currentPiecePosition.y += 1;
-    } else {
+    }
+    if (!isChanged) {
       return this.placePiece();
     }
   };

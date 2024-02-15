@@ -1,4 +1,5 @@
 import {
+  BaseWsExceptionFilter,
   ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
@@ -6,6 +7,7 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from "@nestjs/websockets";
 import { Socket } from "socket.io";
 import Player from "../logics/Player";
@@ -13,7 +15,35 @@ import Game from "../logics/Game";
 import { PieceFactory } from "../logics/factory";
 import { Piece } from "src/logics/Piece";
 
+import {
+  ArgumentsHost,
+  Catch,
+  HttpException,
+  UseFilters,
+  UsePipes,
+  ValidationPipe,
+} from "@nestjs/common";
+
+@Catch(WsException, HttpException)
+export class WebsocketExceptionsFilter extends BaseWsExceptionFilter {
+  catch(exception: WsException | HttpException, host: ArgumentsHost) {
+    const socket = host.switchToWs().getClient() as Socket;
+    const error =
+      exception instanceof WsException
+        ? exception.getError()
+        : exception.getResponse();
+    const details = error instanceof Object ? { ...error } : { message: error };
+    socket.emit("error", {
+      error: {
+        details,
+      },
+    });
+  }
+}
+
 @WebSocketGateway(3001, { transports: ["websocket"] })
+@UseFilters(WebsocketExceptionsFilter)
+@UsePipes(new ValidationPipe({ transform: true }))
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private server: Socket;
@@ -123,23 +153,22 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       board: previewString,
     });
   };
-
   @SubscribeMessage("startGame")
   async handleStartGame(@ConnectedSocket() socket: Socket): Promise<void> {
     const currentPlayer = this._clients.get(socket.id);
     if (!currentPlayer) {
-      throw new Error("Player not found");
+      throw new WsException("Player not found");
     }
     if (!this._rooms.has(currentPlayer.room)) {
-      throw new Error("Room not found");
+      throw new WsException("Room not found");
     }
 
     if (this._rooms.get(currentPlayer.room).owner !== currentPlayer.name) {
-      throw new Error("You are not the owner of the room");
+      throw new WsException("You are not the owner of the room");
     }
 
     if (this._rooms.get(currentPlayer.room).status === "playing") {
-      throw new Error("Game already started, please wait");
+      throw new WsException("Game already started, please wait");
     }
 
     this._rooms.get(currentPlayer.room).status = "playing";
@@ -228,7 +257,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
           nbLinesCleared,
         );
       });
-      await this.sleep(500);
+      await this.sleep(1000);
     }
   }
 
@@ -237,11 +266,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const player = this._clients.get(socket.id);
 
     if (!player) {
-      throw new Error("Player not found");
+      throw new WsException("Player not found");
     }
 
     if (!player.game) {
-      throw new Error("Player not in game");
+      throw new WsException("Player not in game");
     }
     player.game.rotate();
     this.emitPreviewBoard(player);
@@ -252,11 +281,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const player = this._clients.get(socket.id);
 
     if (!player) {
-      throw new Error("Player not found");
+      throw new WsException("Player not found");
     }
 
     if (!player.game) {
-      throw new Error("Player not in game");
+      throw new WsException("Player not in game");
     }
     player.game.moveLeft();
     this.emitPreviewBoard(player);
@@ -267,11 +296,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const player = this._clients.get(socket.id);
 
     if (!player) {
-      throw new Error("Player not found");
+      throw new WsException("Player not found");
     }
 
     if (!player.game) {
-      throw new Error("Player not in game");
+      throw new WsException("Player not in game");
     }
     player.game.moveRight();
     this.emitPreviewBoard(player);
@@ -282,11 +311,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const player = this._clients.get(socket.id);
 
     if (!player) {
-      throw new Error("Player not found");
+      throw new WsException("Player not found");
     }
 
     if (!player.game) {
-      throw new Error("Player not in game");
+      throw new WsException("Player not in game");
     }
     const nbLinesCleared = player.game.moveDown();
     if (nbLinesCleared > 0) {
@@ -306,11 +335,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const player = this._clients.get(socket.id);
 
     if (!player) {
-      throw new Error("Player not found");
+      throw new WsException("Player not found");
     }
 
     if (!player.game) {
-      throw new Error("Player not in game");
+      throw new WsException("Player not in game");
     }
     const nbLinesCleared = player.game.drop();
     if (nbLinesCleared > 0) {
