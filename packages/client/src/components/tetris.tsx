@@ -11,7 +11,14 @@ function Tetris({socket}: {socket:any}) {
   });
 
   socket.on("gameOver", () => {
-    alert("Game Over");
+    console.log("Receiving Game Over");
+    return (
+      <>
+        <div className={"game-over"}>
+          <p>Game Over</p>
+        </div>
+      </>
+    );
   });
 
   const darkenColor = (color: string) => {

@@ -127,6 +127,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         );
         mapBoard.push({ name: player.name, map: previewString });
       }
+      let playerToRemove: Player = null;
       for (const player of players) {
         if (player.game.nextPiece === null) {
           player.game.nextPiece = PieceFactory.createRandomPiece();
@@ -137,9 +138,12 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
         if (player.game.isGameOver()) {
           player.socket.emit("gameOver");
-          players = players.filter((p) => p.name !== player.name);
+          playerToRemove = player;
         }
         player.socket.emit("spectraBoard", mapBoard);
+      }
+      if (playerToRemove) {
+        players = players.filter((p) => p.name !== playerToRemove.name);
       }
 
       if (players.length === 0) {
