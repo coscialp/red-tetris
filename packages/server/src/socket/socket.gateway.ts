@@ -11,13 +11,24 @@ import { Socket } from "socket.io";
 import Player from "../logics/Player";
 import Game from "../logics/Game";
 import { PieceFactory } from "../logics/factory";
+import { Piece } from "src/logics/Piece";
+import {
+  BluePiece,
+  CyanPiece,
+  GreenPiece,
+  OrangePiece,
+  PurplePiece,
+  RedPiece,
+  YellowPiece,
+} from "src/logics/VariantPiece";
 
 @WebSocketGateway(3001, { transports: ["websocket"] })
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private server: Socket;
-  private _rooms: Map<string, string> = new Map();
+  private _rooms: Map<string, { owner: string; pieces: Piece[] }> = new Map();
   private _clients: Map<string, Player> = new Map();
+  private _pieceBag: Piece[] = [];
 
   handleConnection(@ConnectedSocket() socket: Socket): void {
     console.log("Client connected with id: ", socket.id);
@@ -78,7 +89,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return colorString;
       }),
     );
-
     player.socket.emit("previewBoard", {
       board: previewString,
     });
@@ -94,7 +104,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new Error("Room not found");
     }
 
-    if (this._rooms.get(currentPlayer.room) !== currentPlayer.name) {
+    if (this._rooms.get(currentPlayer.room.owner) !== currentPlayer.name) {
       throw new Error("You are not the owner of the room");
     }
 

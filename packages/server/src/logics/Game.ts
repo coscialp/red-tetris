@@ -9,11 +9,19 @@ class Game {
   private _nextPiece: Piece | null = null;
   private _currentPiecePosition: Position;
   private _numberOfUnavailableLines: number = 0;
-
+  private _nbPiecePlaced: number = 0;
   constructor(currentPiece: Piece, nextPiece: Piece) {
     this._currentPiecePosition = this.defaultPiecePosition();
     this._currentPiece = currentPiece;
     this._nextPiece = nextPiece;
+  }
+
+  public get nbPiecePlaced() {
+    return this._nbPiecePlaced;
+  }
+
+  public set nbPiecePlaced(value: number) {
+    this._nbPiecePlaced = value;
   }
 
   private defaultPiecePosition = () => {
