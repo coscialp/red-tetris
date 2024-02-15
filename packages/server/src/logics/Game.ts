@@ -29,7 +29,6 @@ class Game {
   };
 
   public get nextPieceArray() {
-    console.log(this.nextPiece.color);
     return this.nextPiece.nextPiecePreview;
   }
 
@@ -93,7 +92,7 @@ class Game {
     }
   };
 
-  public moveDown = () => {
+  public moveDown = (): number => {
     const nextPosition = this.piecePositions.map((position) => ({
       x: position.x,
       y: position.y + 1,
@@ -101,17 +100,17 @@ class Game {
     if (this.isValidPositions(nextPosition)) {
       this._currentPiecePosition.y += 1;
     } else {
-      this.placePiece();
+      return this.placePiece();
     }
   };
 
-  public placePiece = () => {
+  public placePiece = (): number => {
     if (this.isGameOver()) {
-      return;
+      return 0;
     }
     this.piecePositions.forEach((position) => {
       if (position.y < 0) {
-        return;
+        return 0;
       }
       this._board[position.y][position.x] = this._currentPiece.color;
     });
@@ -119,12 +118,12 @@ class Game {
     this._currentPiece = this._nextPiece!;
     this._nextPiece = null;
     this._currentPiecePosition = this.defaultPiecePosition();
-    this.clearLines();
+    return this.clearLines();
   };
 
-  public drop = () => {
+  public drop = (): number => {
     if (this.isGameOver() || !this._nextPiece) {
-      return;
+      return 0;
     }
     let nextPosition = this.piecePositions.map((position) => ({
       x: position.x,
@@ -137,8 +136,7 @@ class Game {
         y: position.y + 1,
       }));
     }
-    this.placePiece();
-    console.log("Dropped");
+    return this.placePiece();
   };
 
   public increaseUnavailableLines = () => {
@@ -156,7 +154,7 @@ class Game {
     });
   };
 
-  public clearLines = () => {
+  public clearLines = (): number => {
     const lines = this._board.reduce((acc, row, index) => {
       if (row.every((cell) => cell !== 0x0n)) {
         acc.push(index);
@@ -168,6 +166,7 @@ class Game {
       this._board.splice(line, 1);
       this._board.unshift(Array(10).fill(0x0n));
     });
+    return lines.length;
   };
 
   public isGameOver = (): boolean => {

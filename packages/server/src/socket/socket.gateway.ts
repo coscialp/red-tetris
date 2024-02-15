@@ -29,6 +29,17 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleDisconnect(@ConnectedSocket() socket: Socket): void {
     this._clients.delete(socket.id);
     console.log("Client disconnected with id: ", socket.id);
+    this._rooms.forEach((room, key) => {
+      let nbPlayers = 0;
+      this._clients.forEach((player) => {
+        if (player.room === key) {
+          nbPlayers++;
+        }
+      });
+      if (nbPlayers === 0) {
+        this._rooms.delete(key);
+      }
+    });
   }
 
   @SubscribeMessage("getOwnerByRoomName")
@@ -36,7 +47,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: any,
   ) {
-    const owner = this._rooms.get(body.room);
+    const owner = this._rooms.get(body.room).owner;
     socket.emit("owner", { owner: owner });
   }
 
@@ -72,6 +83,25 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   private sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  private increaseUnavailableLines = (
+    currentPlayer: Player,
+    players: Player[],
+    nbLinesCleared: number,
+  ) => {
+    while (nbLinesCleared > 0) {
+      players.forEach((player: Player) => {
+        if (player.name !== currentPlayer.name) {
+          try {
+            player.game.increaseUnavailableLines();
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      });
+      nbLinesCleared--;
+    }
+  };
 
   emitPreviewBoard = (player: Player) => {
     const previewString = player.game.previewBoard.map((row) =>
@@ -118,6 +148,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
     while (true) {
       const mapBoard = [];
+      if (players.length === 0) {
+        return;
+      }
       for (const player of players) {
         const previewString = player.game.spectra.map((row) =>
           row.map((cell) => {
@@ -167,7 +200,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.emitPreviewBoard(player);
       });
 
-      players.forEach((player) => player.game.moveDown());
+      players.forEach((player) => {
+        const nbLinesCleared = player.game.moveDown();
+        this.increaseUnavailableLines(player, players, nbLinesCleared);
+      });
       await this.sleep(500);
     }
   }
@@ -228,7 +264,14 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!player.game) {
       throw new Error("Player not in game");
     }
-    player.game.moveDown();
+    const nbLinesCleared = player.game.moveDown();
+    this.increaseUnavailableLines(
+      player,
+      Array.from(this._clients.values()).filter(
+        (p) => p.room === player.room && p.name !== player.name,
+      ),
+      nbLinesCleared,
+    );
     this.emitPreviewBoard(player);
   }
 
@@ -243,24 +286,14 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!player.game) {
       throw new Error("Player not in game");
     }
-    player.game.drop();
-    this.emitPreviewBoard(player);
-  }
-
-  @SubscribeMessage("increaseUnavailableLines")
-  handleIncreaseUnavailableLines(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() body: any,
-  ): void {
-    const players = Array.from(this._clients.values()).filter(
-      (player) => player.room === body.room,
+    const nbLinesCleared = player.game.drop();
+    this.increaseUnavailableLines(
+      player,
+      Array.from(this._clients.values()).filter(
+        (p) => p.room === player.room && p.name !== player.name,
+      ),
+      nbLinesCleared,
     );
-
-    players.forEach((player) => {
-      if (player.name !== this._clients.get(socket.id).name) {
-        player.game.increaseUnavailableLines();
-        this.emitPreviewBoard(player);
-      }
-    });
+    this.emitPreviewBoard(player);
   }
 }
