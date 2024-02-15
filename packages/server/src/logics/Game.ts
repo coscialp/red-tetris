@@ -9,11 +9,19 @@ class Game {
   private _nextPiece: Piece | null = null;
   private _currentPiecePosition: Position;
   private _numberOfUnavailableLines: number = 0;
-
+  private _nbPiecePlaced: number = 0;
   constructor(currentPiece: Piece, nextPiece: Piece) {
     this._currentPiecePosition = this.defaultPiecePosition();
-    this._currentPiece = currentPiece;
-    this._nextPiece = nextPiece;
+    this._currentPiece = currentPiece.clone();
+    this._nextPiece = nextPiece.clone();
+  }
+
+  public get nbPiecePlaced() {
+    return this._nbPiecePlaced;
+  }
+
+  public set nbPiecePlaced(value: number) {
+    this._nbPiecePlaced = value;
   }
 
   private defaultPiecePosition = () => {
@@ -34,13 +42,10 @@ class Game {
   }
 
   public set nextPiece(piece: Piece) {
-    this._nextPiece = piece;
+    this._nextPiece = piece.clone();
   }
 
   public get piecePositions(): Position[] {
-    if (!this._currentPiece) {
-      return [];
-    }
     return this._currentPiece.position.map((position) => ({
       x: position.x + this._currentPiecePosition.x,
       y: position.y + this._currentPiecePosition.y,
@@ -110,6 +115,7 @@ class Game {
       }
       this._board[position.y][position.x] = this._currentPiece.color;
     });
+    this._nbPiecePlaced += 1;
     this._currentPiece = this._nextPiece!;
     this._nextPiece = null;
     this._currentPiecePosition = this.defaultPiecePosition();

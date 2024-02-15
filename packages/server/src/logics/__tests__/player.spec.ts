@@ -1,6 +1,6 @@
-import Player from "./Player";
-import Game from "./Game";
-import { PieceFactory } from "./factory";
+import Player from "../Player";
+import Game from "../Game";
+import { PieceFactory } from "../factory";
 
 describe("Player", () => {
   it("should create a player", () => {

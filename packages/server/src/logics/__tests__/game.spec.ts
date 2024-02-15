@@ -1,5 +1,5 @@
-import Game from "./Game";
-import { BluePiece, CyanPiece, YellowPiece } from "./VariantPiece";
+import Game from "../Game";
+import { BluePiece, CyanPiece, YellowPiece } from "../VariantPiece";
 import {
   boardWithBluePiece,
   boardWithBluePieceAndOneRotation,
@@ -9,8 +9,8 @@ import {
   boardWithOneClearedLine,
   emptyBoard,
   twoDropLines,
-} from "./examples_board";
-import { PieceFactory } from "./factory";
+} from "../examples_board";
+import { PieceFactory } from "../factory";
 
 describe("Game", () => {
   it("should have an empty board at creation", () => {
@@ -103,11 +103,5 @@ describe("Game", () => {
     } catch (error) {
       expect(error).toEqual(new Error("Game Over"));
     }
-  });
-  it("should return a empty list if no current piece", () => {
-    const game = new Game(new BluePiece(), new BluePiece());
-    game.drop();
-    game.drop();
-    expect(game.piecePositions).toEqual([]);
   });
 });

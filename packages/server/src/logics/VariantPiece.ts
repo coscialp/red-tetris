@@ -5,6 +5,11 @@ class CyanPiece extends Piece {
   get color(): bigint {
     return 0x00ffffffn;
   }
+
+  clone(): Piece {
+    return new CyanPiece();
+  }
+
   get nextPiecePreview() {
     return [["00ffffff", "00ffffff", "00ffffff", "00ffffff"]];
   }
@@ -42,12 +47,17 @@ class BluePiece extends Piece {
   get color(): bigint {
     return 0x0000ffffn;
   }
+
+  clone(): Piece {
+    return new BluePiece();
+  }
   get nextPiecePreview() {
     return [
       ["0000ffff", "00000000", "00000000"],
       ["0000ffff", "0000ffff", "0000ffff"],
     ];
   }
+
   get rotations(): Position[][] {
     return [
       [
@@ -81,6 +91,10 @@ class BluePiece extends Piece {
 class OrangePiece extends Piece {
   get color(): bigint {
     return 0xffa500ffn;
+  }
+
+  clone(): Piece {
+    return new OrangePiece();
   }
   get nextPiecePreview() {
     return [
@@ -123,6 +137,10 @@ class YellowPiece extends Piece {
     return 0xffff00ffn;
   }
 
+  clone(): Piece {
+    return new YellowPiece();
+  }
+
   get nextPiecePreview() {
     return [
       ["ffff00ff", "ffff00ff"],
@@ -144,6 +162,10 @@ class YellowPiece extends Piece {
 class GreenPiece extends Piece {
   get color(): bigint {
     return 0x00ff00ffn;
+  }
+
+  clone(): Piece {
+    return new GreenPiece();
   }
   get nextPiecePreview() {
     return [
@@ -184,6 +206,10 @@ class GreenPiece extends Piece {
 class RedPiece extends Piece {
   get color(): bigint {
     return 0xff0000ffn;
+  }
+
+  clone(): Piece {
+    return new RedPiece();
   }
 
   get nextPiecePreview() {
@@ -227,6 +253,11 @@ class PurplePiece extends Piece {
   get color(): bigint {
     return 0x800080ffn;
   }
+
+  clone(): Piece {
+    return new PurplePiece();
+  }
+
   get nextPiecePreview() {
     return [
       ["00000000", "800080ff", "00000000"],
