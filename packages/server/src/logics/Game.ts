@@ -38,6 +38,9 @@ class Game {
   }
 
   public get piecePositions(): Position[] {
+    if (!this._currentPiece) {
+      return [];
+    }
     return this._currentPiece.position.map((position) => ({
       x: position.x + this._currentPiecePosition.x,
       y: position.y + this._currentPiecePosition.y,
@@ -56,7 +59,11 @@ class Game {
 
   public rotate = () => {
     const nextRotation = this._currentPiece.nextRotation;
-    if (this.isValidPositions(nextRotation)) {
+    const realNextRotation = nextRotation.map((position) => ({
+      x: position.x + this._currentPiecePosition.x,
+      y: position.y + this._currentPiecePosition.y,
+    }));
+    if (this.isValidPositions(realNextRotation)) {
       this._currentPiece.rotate();
     }
   };
@@ -94,7 +101,13 @@ class Game {
   };
 
   public placePiece = () => {
+    if (this.isGameOver()) {
+      return;
+    }
     this.piecePositions.forEach((position) => {
+      if (position.y < 0) {
+        return;
+      }
       this._board[position.y][position.x] = this._currentPiece.color;
     });
     this._currentPiece = this._nextPiece!;
@@ -104,6 +117,9 @@ class Game {
   };
 
   public drop = () => {
+    if (this.isGameOver() || !this._nextPiece) {
+      return;
+    }
     let nextPosition = this.piecePositions.map((position) => ({
       x: position.x,
       y: position.y + 1,
@@ -116,6 +132,7 @@ class Game {
       }));
     }
     this.placePiece();
+    console.log("Dropped");
   };
 
   public increaseUnavailableLines = () => {
@@ -177,8 +194,10 @@ class Game {
   public get previewBoard() {
     const previewBoard = this._board.map((row) => row.map((cell) => cell));
     this.shadow.forEach((position) => {
-      previewBoard[position.y][position.x] =
-        this._currentPiece.color - BigInt(200);
+      if (position.y >= 0) {
+        previewBoard[position.y][position.x] =
+          this._currentPiece.color - BigInt(200);
+      }
     });
     this.piecePositions.forEach((position) => {
       if (position.y >= 0) {
@@ -186,6 +205,12 @@ class Game {
       }
     });
     return previewBoard;
+  }
+
+  public get visualPreviewBoard() {
+    return this.previewBoard
+      .map((row) => row.map((cell) => (cell === 0x0n ? "." : "X")).join(""))
+      .join("\n");
   }
 
   public get visualBoard() {

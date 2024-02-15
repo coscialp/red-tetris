@@ -1,20 +1,19 @@
 .cell {
-  height: 25px;
-  width: 25px;
+  /*height: 25px;
+  width: 25px;*/
 }
 
 .row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-content: center;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
 }
 
 .board {
   border: 6px solid white;
   grid-column: 2;
+  height: 500px;
+  width: 250px;
+  display: grid;
 }
 
 .square {

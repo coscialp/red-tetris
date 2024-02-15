@@ -15,6 +15,13 @@ describe("PieceFactory", () => {
     const piece = PieceFactory.createRandomPiece();
     expect(piece).toBeInstanceOf(Piece);
   });
+  it("should throw error if color not implemented", () => {
+    try {
+      PieceFactory.create("not-implemented" as any);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
 });
 
 describe("Piece", () => {
@@ -24,6 +31,9 @@ describe("Piece", () => {
       expect(rotation).toHaveLength(4);
     });
   });
+  it("should hexaColor work", () => {
+    expect(Piece.hexaColor(new CyanPiece().color)).toEqual("00ffffff");
+  });
   pieceColors.forEach((color) => {
     it(`should correctly rotate ${color} piece`, () => {
       const piece = PieceFactory.create(color);
@@ -31,6 +41,10 @@ describe("Piece", () => {
         expect(piece.position).toEqual(rotation);
         piece.rotate();
       });
+    });
+    it(`should have a good color for ${color} piece`, () => {
+      const piece = PieceFactory.create(color);
+      expect(piece.color).toBeDefined();
     });
   });
 });

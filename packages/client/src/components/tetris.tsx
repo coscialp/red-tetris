@@ -1,5 +1,5 @@
 import "./tetris.scss";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 
 function Tetris({socket}: {socket:any}) {
@@ -21,27 +21,18 @@ function Tetris({socket}: {socket:any}) {
 
       switch (key) {
         case 'ArrowUp':
-          console.log('rotate');
           socket.emit('rotate');
           break;
-
         case 'ArrowDown':
-          console.log('moveDown');
           socket.emit('moveDown');
           break;
-
         case 'ArrowLeft':
-          console.log('moveLeft');
           socket.emit('moveLeft');
           break;
-
         case 'ArrowRight':
-          console.log('moveRight');
           socket.emit('moveRight');
           break;
-
         case ' ':
-          console.log('drop');
           socket.emit('drop');
           break;
       }
@@ -69,7 +60,7 @@ function Tetris({socket}: {socket:any}) {
       {grid.map((row) => (
         <div className={"row"}>
           {row.map((cell) => (
-            <div className={cell === "00000000" ? "cell empty" : "cell full"} style={cell !== "00000000" ? {backgroundColor: `#${cell}`, borderColor: `#${cell}`} : {}}/>
+            <div className={cell === "00000000" ? "cell empty" : "cell full"} style={cell !== "00000000" ? {backgroundColor: `#${cell}`.slice(0, -2) + "C8", borderColor: `#${cell}`} : {}}/>
           ))}
         </div>
       ))}
