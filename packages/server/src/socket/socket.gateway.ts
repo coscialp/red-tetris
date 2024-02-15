@@ -49,7 +49,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: any,
   ) {
-    const owner = this._rooms.get(body.room).owner;
+    console.log("getOwnerByRoomName", body);
+    console.log(this._rooms);
+    console.log(this._rooms.get(body));
+    const owner = this._rooms.get(body).owner;
     socket.emit("owner", { owner: owner });
   }
 
@@ -83,6 +86,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         new Player(body.username, socket, body.room),
       );
     console.log(`Client ${body.username} joined game with id: ${body.room}`);
+    socket.emit("joined", { room: this._rooms.get(body.room) });
   }
 
   private sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

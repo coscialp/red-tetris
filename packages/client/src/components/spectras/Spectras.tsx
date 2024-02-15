@@ -9,7 +9,6 @@ function Spectras({socket, name}: {socket:any, name: string}) {
     setSpectras(data);
   });
 
-  console.log(spectras);
   if (!spectras || spectras.length === 1) {
     return (
       <>

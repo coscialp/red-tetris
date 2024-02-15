@@ -9,6 +9,7 @@ function Home() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isError, setIsError] = useState(false);
   const [room, setRoom] = useState("");
+  const [owner, setOwner] = useState("");
   const [username, setUsername] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -45,6 +46,10 @@ function Home() {
     )
   }
 
+  socket.on("joined", (data) => {
+    setOwner(data.room.owner);
+  });
+
   socket.on("connect", () => {
     console.log("Connected to server");
     socket.emit("join", { room, username });
@@ -61,11 +66,11 @@ function Home() {
   return (
     <div className={"main-window"}>
       {
-        !isPlaying ? <button className={"btn-start"} onClick={() => {
+        !isPlaying && owner === username ? <button className={"btn-start"} onClick={() => {
           socket!.emit("startGame");
-        }}>Start</button> : null
+        }}>Start</button> : <div></div>
       }
-      <Tetris socket={socket}/>
+      <Tetris socket={socket} me={username} owner={owner}/>
       <div className={"right-panel"}>
         <NextPiece socket={socket}/>
         <Spectras socket={socket} name={username} />

@@ -2,7 +2,7 @@ import "./tetris.scss";
 import {useEffect, useState} from "react";
 import chroma from "chroma-js";
 
-function Tetris({socket}: {socket:any}) {
+function Tetris({socket, me, owner}: {socket:any, me: string, owner: string}) {
   //const grid = Array.from(Array(20), () => new Array(10).fill(Math.floor(Math.random() * 2)));
   const [grid, setGrid] = useState<string[][]>([]);
 
@@ -12,7 +12,6 @@ function Tetris({socket}: {socket:any}) {
     });
 
     socket.on("gameOver", () => {
-      console.log("Receiving Game Over");
       alert("Game Over");
     });
   }, []);
@@ -53,9 +52,16 @@ function Tetris({socket}: {socket:any}) {
   }, []);
 
   if (grid.length === 0) {
+    if (me === owner) {
+      return (
+        <>
+          <p>Press Start to launch the game !</p>
+        </>
+      )
+    }
     return (
       <>
-        <p>Loading...</p>
+        <p>Waiting for the owner to start the game...</p>
       </>
     )
   }
