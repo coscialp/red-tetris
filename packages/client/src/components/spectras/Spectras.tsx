@@ -9,7 +9,6 @@ function Spectras({socket}: {socket:any}) {
     setSpectras(data);
   });
 
-  console.log(spectras);
 
   return(
     <>
