@@ -28,6 +28,10 @@ class Player {
     this._game = game;
   }
 
+  public endGame() {
+    this._game = undefined;
+  }
+
   public get socket() {
     return this._socket;
   }
