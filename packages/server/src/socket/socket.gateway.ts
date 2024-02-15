@@ -101,13 +101,17 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     let players = Array.from(this._clients.values()).filter(
       (player) => player.room === currentPlayer.room,
     );
-    players.forEach((player) =>
-      player.startGame(
-        new Game(
-          PieceFactory.createRandomPiece(),
-          PieceFactory.createRandomPiece(),
-        ),
-      ),
+    players.forEach((player) => {
+        player.startGame(
+          new Game(
+            PieceFactory.createRandomPiece(),
+            PieceFactory.createRandomPiece(),
+          ),
+        );
+      player.socket.emit("nextPiece", {
+        nextPiece: player.game.nextPiece.nextPiecePreview,
+      });
+      }
     );
     while (true) {
       const mapBoard = [];
@@ -130,7 +134,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
           player.socket.emit("nextPiece", {
             nextPiece: player.game.nextPiece.nextPiecePreview,
           });
-          console.log(player.game.nextPiece.nextPiecePreview);
         }
         if (player.game.isGameOver()) {
           player.socket.emit("gameOver");

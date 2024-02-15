@@ -15,10 +15,7 @@ function Tetris({socket}: {socket:any}) {
   });
 
   const darkenColor = (color: string) => {
-    console.log(color);
-    const chrom = chroma("#" + color).darken(0.3).hex();
-    console.log(chrom);
-    return chrom;
+    return chroma("#" + color).darken(0.3).hex();
   }
 
   useEffect(() => {
