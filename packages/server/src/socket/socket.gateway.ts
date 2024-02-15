@@ -17,7 +17,10 @@ import { Piece } from "src/logics/Piece";
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private server: Socket;
-  private _rooms: Map<string, { owner: string; pieces: Piece[] }> = new Map();
+  private _rooms: Map<
+    string,
+    { owner: string; pieces: Piece[]; status: string }
+  > = new Map();
   private _clients: Map<string, Player> = new Map();
   private _pieceBag: Piece[] = [];
 
@@ -61,6 +64,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this._rooms.set(body.room, {
         owner: body.username,
         pieces: PieceFactory.createBagPieces(),
+        status: "waiting",
       });
     }
     const players = Array.from(this._clients.values()).filter(
@@ -132,6 +136,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new Error("You are not the owner of the room");
     }
 
+    if (this._rooms.get(currentPlayer.room).status === "playing") {
+      throw new Error("Game already started, please wait");
+    }
+
+    this._rooms.get(currentPlayer.room).status = "playing";
     let players = Array.from(this._clients.values()).filter(
       (player) => player.room === currentPlayer.room,
     );
@@ -182,7 +191,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
             nextPiece: player.game.nextPiece.nextPiecePreview,
           });
         }
-        if (player.game.isGameOver()) {
+        if (player.game.isGameOver() && players.length === 1) {
+          player.socket.emit("winner");
+          playerToRemove = player;
+        } else if (player.game.isGameOver()) {
           player.socket.emit("gameOver");
           playerToRemove = player;
         }

@@ -57,7 +57,8 @@ class Game {
         position.x >= 0 &&
         position.x < 10 &&
         position.y < 20 &&
-        (position.y < 0 || this._board[position.y][position.x] === 0x0n),
+        (position.y < this._numberOfUnavailableLines ||
+          this._board[position.y][position.x] === 0x0n),
     );
   };
 
@@ -156,7 +157,7 @@ class Game {
 
   public clearLines = (): number => {
     const lines = this._board.reduce((acc, row, index) => {
-      if (row.every((cell) => cell !== 0x0n)) {
+      if (row.every((cell) => cell !== 0x0n && cell !== 0x646464d9n)) {
         acc.push(index);
       }
       return acc;
@@ -164,7 +165,11 @@ class Game {
 
     lines.forEach((line) => {
       this._board.splice(line, 1);
-      this._board.unshift(Array(10).fill(0x0n));
+      this._board.unshift(
+        Array(10).fill(
+          this._numberOfUnavailableLines === 0 ? 0x0n : 0x646464d9n,
+        ),
+      );
     });
     return lines.length;
   };
