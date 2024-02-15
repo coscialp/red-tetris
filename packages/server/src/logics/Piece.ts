@@ -13,7 +13,7 @@ type PieceColor = (typeof pieceColors)[number];
 
 abstract class Piece {
   protected _rotation: number = 0;
-
+  abstract get nextPiecePreview(): string[][];
   abstract get color(): bigint;
   abstract get rotations(): Position[][];
 
