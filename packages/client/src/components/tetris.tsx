@@ -1,5 +1,5 @@
 import "./tetris.scss";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import chroma from "chroma-js";
 
 function Tetris({socket, me, owner}: {socket:any, me: string, owner: string}) {
@@ -18,7 +18,8 @@ function Tetris({socket, me, owner}: {socket:any, me: string, owner: string}) {
     socket.on("winner", () => {
       alert("You won !");
     });
-  }, []);
+
+  }, [socket]);
 
   const darkenColor = (color: string) => {
     return chroma("#" + color).darken(0.3).hex();

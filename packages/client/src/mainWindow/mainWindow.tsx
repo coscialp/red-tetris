@@ -69,6 +69,10 @@ function Home() {
     setStartLabel("Restart");
   });
 
+  socket.on("error", (error: any) => {
+    console.log("Error: ", error);
+  });
+
   return (
     <div className={"main-window"}>
       {
