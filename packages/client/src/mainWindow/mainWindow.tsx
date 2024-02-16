@@ -13,6 +13,7 @@ function Home() {
   const [username, setUsername] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
   const [startLabel, setStartLabel] = useState("Start");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const url = window.location.href;
@@ -66,12 +67,27 @@ function Home() {
 
   socket.on("gameFinished", () => {
     setIsPlaying(false);
+    setError(""); // TODO : check if it's the right place to reset the error
     setStartLabel("Restart");
+  });
+
+  socket.on("newOwner", (data) => {
+    console.log(data);
+    setOwner(data.owner);
   });
 
   socket.on("error", (error: any) => {
     console.log("Error: ", error);
+    setError(error.error.details.message);
   });
+
+  if (error !== "") {
+    return (
+      <>
+        <div>{error}</div>
+      </>
+    )
+  }
 
   return (
     <div className={"main-window"}>

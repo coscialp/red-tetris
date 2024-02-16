@@ -63,13 +63,22 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log("Client disconnected with id: ", socket.id);
     this._rooms.forEach((room, key) => {
       let nbPlayers = 0;
+      let ownerIsConnected: boolean = false;
       this._clients.forEach((player) => {
+        if (room.owner === player.name) {
+          ownerIsConnected = true;
+        }
         if (player.room === key) {
           nbPlayers++;
         }
       });
       if (nbPlayers === 0) {
         this._rooms.delete(key);
+      }
+      else if (!ownerIsConnected) {
+        const newOwner = Array.from(this._clients.values()).filter((player) => player.room === key)[0];
+        room.owner = newOwner.name;
+        newOwner.socket.emit("newOwner", { owner: room.owner });
       }
     });
   }
@@ -99,6 +108,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         status: "waiting",
       });
     }
+    if (this._rooms.get(body.room).status === "playing") {
+      throw new WsException("Game already started, please wait");
+    }
+
     const players = Array.from(this._clients.values()).filter(
       (player) => player.room === body.room,
     );
@@ -132,7 +145,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
       players.forEach((player: Player) => {
         try {
-          console.log("player " + player.name + " unavailableLines++");
           player.game.increaseUnavailableLines();
         } catch (error) {
           console.error(error);
@@ -145,7 +157,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   emitPreviewBoard = (player: Player) => {
     const previewString = player.game.previewBoard.map((row) =>
       row.map((cell) => {
-        console.log(cell);
         let colorString = cell.toString(16);
         while (colorString.length < 8) {
           colorString = "0" + colorString;
@@ -171,9 +182,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new WsException("You are not the owner of the room");
     }
 
-    if (this._rooms.get(currentPlayer.room).status === "playing") {
-      throw new WsException("Game already started, please wait");
-    }
 
     this._rooms.get(currentPlayer.room).status = "playing";
     this.server.emit("gameStarted");
@@ -251,9 +259,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       players.forEach((player) => {
         const nbLinesCleared = player.game.moveDown();
-        if (nbLinesCleared > 0) {
-          console.log("player " + player.name + " send unavailableLines");
-        }
+
         this.increaseUnavailableLines(
           players.filter((p) => p.name !== player.name),
           nbLinesCleared,
@@ -320,9 +326,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new WsException("Player not in game");
     }
     const nbLinesCleared = player.game.moveDown();
-    if (nbLinesCleared > 0) {
-      console.log("player " + player.name + " send unavailableLines");
-    }
+
     this.increaseUnavailableLines(
       Array.from(this._clients.values()).filter(
         (p) => p.room === player.room && p.name !== player.name,
@@ -344,9 +348,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new WsException("Player not in game");
     }
     const nbLinesCleared = player.game.drop();
-    if (nbLinesCleared > 0) {
-      console.log("player " + player.name + " send unavailableLines");
-    }
+
     this.increaseUnavailableLines(
       Array.from(this._clients.values()).filter(
         (p) => p.room === player.room && p.name !== player.name,
