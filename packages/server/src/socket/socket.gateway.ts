@@ -92,7 +92,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!this._rooms.has(body.room)) {
       this._rooms.set(body.room, {
         owner: body.username,
-        pieces: PieceFactory.createBagPieces(),
+        pieces: [],
         status: "waiting",
       });
     }
@@ -180,6 +180,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this._rooms.get(currentPlayer.room).status === "playing") {
       throw new WsException("Game already started, please wait");
     }
+
+    this._rooms.get(currentPlayer.room).pieces = PieceFactory.createBagPieces();
 
     this._rooms.get(currentPlayer.room).status = "playing";
 

@@ -22,7 +22,7 @@ function Tetris({socket, me, owner}: {socket:any, me: string, owner: string}) {
   }, [socket]);
 
   const darkenColor = (color: string) => {
-    return chroma("#" + color).darken(0.3).hex();
+    return chroma("#" + color).darken(0.4).hex();
   }
 
   useEffect(() => {
