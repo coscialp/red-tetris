@@ -127,7 +127,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         try {
           player.game.increaseUnavailableLines();
         } catch (error) {
-          console.error(error);
+          player.socket.emit("gameOver");
+          player.endGame();
         }
       });
       nbLinesCleared--;
@@ -344,6 +345,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!player.game) {
       throw new WsException("Player not in game");
     }
+
     const nbLinesCleared = player.game.drop();
     this.increaseUnavailableLines(
       Array.from(this._clients.values()).filter(
