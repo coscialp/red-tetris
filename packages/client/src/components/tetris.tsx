@@ -22,7 +22,7 @@ function Tetris({socket, me, owner, isPlaying}: {socket:any, me: string, owner: 
   }, [socket]);
 
   const darkenColor = (color: string) => {
-    return chroma("#" + color).darken(0.3).hex();
+    return chroma("#" + color).darken(0.4).hex();
   }
 
   const handleKeyDown = (e: DocumentEventMap["keydown"]) => {

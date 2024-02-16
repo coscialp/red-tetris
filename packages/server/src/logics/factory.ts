@@ -42,13 +42,6 @@ class PieceFactory {
       new OrangePiece(),
       new YellowPiece(),
       new GreenPiece(),
-      new CyanPiece(),
-      new RedPiece(),
-      new BluePiece(),
-      new PurplePiece(),
-      new OrangePiece(),
-      new YellowPiece(),
-      new GreenPiece(),
     ];
 
     for (let i = bag.length - 1; i > 0; i--) {

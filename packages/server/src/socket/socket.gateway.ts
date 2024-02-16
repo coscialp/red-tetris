@@ -101,7 +101,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!this._rooms.has(body.room)) {
       this._rooms.set(body.room, {
         owner: body.username,
-        pieces: PieceFactory.createBagPieces(),
+        pieces: [],
         status: "waiting",
       });
     }
@@ -140,7 +140,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         try {
           player.game.increaseUnavailableLines();
         } catch (error) {
-          console.error(error);
+          player.socket.emit("gameOver");
+          player.endGame();
         }
       });
       nbLinesCleared--;
@@ -190,6 +191,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new WsException("You are not the owner of the room");
     }
 
+
+    this._rooms.get(currentPlayer.room).pieces = PieceFactory.createBagPieces();
 
     this._rooms.get(currentPlayer.room).status = "playing";
 
@@ -352,6 +355,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!player.game) {
       throw new WsException("Player not in game");
     }
+
     const nbLinesCleared = player.game.drop();
     this.increaseUnavailableLines(
       Array.from(this._clients.values()).filter(
