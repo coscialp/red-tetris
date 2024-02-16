@@ -106,7 +106,7 @@ function Home() {
           socket!.emit("startGame");
         }}>{startLabel}</button> : <div></div>
       }
-      <Tetris socket={socket} me={username} owner={owner}/>
+      <Tetris socket={socket} me={username} owner={owner} isPlaying={isPlaying}/>
       <div className={"right-panel"}>
         <NextPiece socket={socket}/>
         <Spectras socket={socket} name={username} />

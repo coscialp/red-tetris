@@ -166,10 +166,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleGetGameStatus(@ConnectedSocket() socket: Socket): void {
     const player = this._clients.get(socket.id);
     if (!player) {
-      throw new WsException("Player not found");
+      socket.emit("gameStatus", { status: "waiting" });
     }
     if (!player.game) {
-      throw new WsException("Player not in game");
+      socket.emit("gameStatus", { status: "waiting" });
     }
     socket.emit("gameStatus", {
       status: this._rooms.get(player.room).status,
