@@ -88,9 +88,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: any,
   ) {
-    console.log("getOwnerByRoomName", body);
-    console.log(this._rooms);
-    console.log(this._rooms.get(body));
     const owner = this._rooms.get(body).owner;
     socket.emit("owner", { owner: owner });
   }
@@ -139,10 +136,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     nbLinesCleared: number,
   ) => {
     while (nbLinesCleared > 0) {
-      console.log(
-        "players",
-        players.map((p) => p.name),
-      );
       players.forEach((player: Player) => {
         try {
           player.game.increaseUnavailableLines();
@@ -168,6 +161,21 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       board: previewString,
     });
   };
+
+  @SubscribeMessage("getGameStatus")
+  handleGetGameStatus(@ConnectedSocket() socket: Socket): void {
+    const player = this._clients.get(socket.id);
+    if (!player) {
+      throw new WsException("Player not found");
+    }
+    if (!player.game) {
+      throw new WsException("Player not in game");
+    }
+    socket.emit("gameStatus", {
+      status: this._rooms.get(player.room).status,
+    });
+  }
+
   @SubscribeMessage("startGame")
   async handleStartGame(@ConnectedSocket() socket: Socket): Promise<void> {
     const currentPlayer = this._clients.get(socket.id);
@@ -184,7 +192,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 
     this._rooms.get(currentPlayer.room).status = "playing";
-    this.server.emit("gameStarted");
 
     let players = Array.from(this._clients.values()).filter(
       (player) => player.room === currentPlayer.room,
@@ -226,7 +233,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       for (const player of players) {
         if (player.game.nextPiece === null) {
           player.game.nextPiece = this._rooms.get(currentPlayer.room).pieces[
-            player.game.nbPiecePlaced + 2
+            player.game.nbPiecePlaced + 1
           ];
           player.game.nextPieceArray;
           player.socket.emit("nextPiece", {
@@ -259,7 +266,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       players.forEach((player) => {
         const nbLinesCleared = player.game.moveDown();
-
         this.increaseUnavailableLines(
           players.filter((p) => p.name !== player.name),
           nbLinesCleared,
@@ -326,7 +332,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new WsException("Player not in game");
     }
     const nbLinesCleared = player.game.moveDown();
-
     this.increaseUnavailableLines(
       Array.from(this._clients.values()).filter(
         (p) => p.room === player.room && p.name !== player.name,
@@ -348,7 +353,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new WsException("Player not in game");
     }
     const nbLinesCleared = player.game.drop();
-
     this.increaseUnavailableLines(
       Array.from(this._clients.values()).filter(
         (p) => p.room === player.room && p.name !== player.name,

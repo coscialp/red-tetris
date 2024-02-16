@@ -51,8 +51,8 @@ describe("SocketGateway", () => {
 
   it("should handle get room by owner", () => {
     jest.spyOn(socketMock, "emit");
-    gateway["_rooms"].set("room", { owner: "owner", pieces: [], status: "status" });
-    gateway.handleGetRoomByOwner(socketMock, { room: "room" });
+    gateway["_rooms"].set("room", { owner: "owner", pieces: [], status: "waiting" });
+    gateway.handleGetRoomByOwner(socketMock, "room");
     expect(socketMock.emit).toBeCalledWith("owner", { owner: "owner" });
   });
 

@@ -5,6 +5,14 @@ import Tetris from "../components/tetris.tsx";
 import NextPiece from "../components/nextPiece/nextPiece.tsx";
 import Spectras from "../components/spectras/Spectras.tsx";
 
+const poller = async (socket: Socket)  => {
+  // eslint-disable-next-line no-constant-condition
+  while (1) {
+    socket.emit("getGameStatus");
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+}
+
 function Home() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isError, setIsError] = useState(false);
@@ -48,6 +56,8 @@ function Home() {
     )
   }
 
+  poller(socket);
+
   socket.on("joined", (data) => {
     setOwner(data.room.owner);
   });
@@ -61,8 +71,8 @@ function Home() {
     console.log("Disconnected from server");
   });
 
-  socket.on("gameStarted", () => {
-    setIsPlaying(true);
+  socket.on("gameStatus", (data: any) => {
+    setIsPlaying(data.status === "playing");
   });
 
   socket.on("gameFinished", () => {
