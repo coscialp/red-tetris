@@ -55,7 +55,6 @@ class PieceFactory {
       const j = Math.floor(Math.random() * (i + 1));
       [bag[i], bag[j]] = [bag[j], bag[i]];
     }
-
     return bag;
   }
 }
