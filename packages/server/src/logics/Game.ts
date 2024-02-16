@@ -94,6 +94,9 @@ class Game {
 
   public moveDown = (): number => {
     let isChanged = false;
+    if (!this._currentPiece || !this._nextPiece) {
+      return 0;
+    }
     const nextPosition = this.piecePositions.map((position) => ({
       x: position.x,
       y: position.y + 1,

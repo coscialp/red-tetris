@@ -166,11 +166,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage("getGameStatus")
   handleGetGameStatus(@ConnectedSocket() socket: Socket): void {
     const player = this._clients.get(socket.id);
-    if (!player) {
-      socket.emit("gameStatus", { status: "waiting" });
-    }
-    if (!player.game) {
-      socket.emit("gameStatus", { status: "waiting" });
+    if (!player || !player.game) {
+      socket.emit("gameStatus", {
+        status: "waiting",
+      });
     }
     socket.emit("gameStatus", {
       status: this._rooms.get(player.room).status,
