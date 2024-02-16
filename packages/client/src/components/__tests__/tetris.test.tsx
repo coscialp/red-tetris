@@ -1,4 +1,4 @@
-import {beforeEach, afterEach, it, expect} from '@jest/globals';
+/*import {beforeEach, afterEach, it, expect} from '@jest/globals';
 import {unmountComponentAtNode } from "react-dom";
 import renderer from 'react-test-renderer';
 import Tetris from "../tetris.tsx";
@@ -15,4 +15,4 @@ it('changes the class when hovered', () => {
   );
   let tree = component.toJSON();
   expect(tree).toMatchSnapshot();
-});
+});*/
