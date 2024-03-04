@@ -74,9 +74,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       });
       if (nbPlayers === 0) {
         this._rooms.delete(key);
-      }
-      else if (!ownerIsConnected) {
-        const newOwner = Array.from(this._clients.values()).filter((player) => player.room === key)[0];
+      } else if (!ownerIsConnected) {
+        const newOwner = Array.from(this._clients.values()).filter(
+          (player) => player.room === key,
+        )[0];
         room.owner = newOwner.name;
         newOwner.socket.emit("newOwner", { owner: room.owner });
       }
@@ -189,7 +190,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this._rooms.get(currentPlayer.room).owner !== currentPlayer.name) {
       throw new WsException("You are not the owner of the room");
     }
-
 
     this._rooms.get(currentPlayer.room).pieces = PieceFactory.createBagPieces();
 
