@@ -1,13 +1,14 @@
 import { useState } from "react";
 import "./spectras.scss";
 import { useDispatch } from "react-redux";
+import { SocketActionTypes } from "../../middlewares/socket";
 
 function Spectras({ name }: { name: string }) {
   const dispatch = useDispatch();
   const [spectras, setSpectras] = useState<{ name: string, map: string[][] }[]>();
 
   dispatch({
-    type: "ON", event: "spectraBoard", callback: (data: { name: string, map: string[][] }[]) => {
+    type: SocketActionTypes.ON, event: "spectraBoard", callback: (data: { name: string, map: string[][] }[]) => {
       setSpectras(data);
     },
   });

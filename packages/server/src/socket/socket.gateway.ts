@@ -222,8 +222,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
           }),
         );
         if (
+          this._rooms.get(currentPlayer.room).pieces &&
           player.game.nbPiecePlaced >=
-          this._rooms.get(currentPlayer.room).pieces.length / 2
+            this._rooms.get(currentPlayer.room).pieces.length / 2
         ) {
           this._rooms.get(currentPlayer.room).pieces = this._rooms
             .get(currentPlayer.room)
