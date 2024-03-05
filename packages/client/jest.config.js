@@ -15,6 +15,12 @@ export default {
   "testPathIgnorePatterns": [
     "/node_modules/",
     "/dist/",
+    "src/main.tsx",
+  ],
+  "coveragePathIgnorePatterns": [
+    "/node_modules/",
+    "/dist/",
+    "src/main.tsx",
   ],
   "testRegex": ".*\\.spec\\.tsx$",
   "transform": {

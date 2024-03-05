@@ -60,7 +60,11 @@
     "rootDir": "src",
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/dist/"
+      "/dist/",
+      "src/main.ts"
+    ],
+    "coveragePathIgnorePatterns": [
+      "src/main.ts"
     ],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {

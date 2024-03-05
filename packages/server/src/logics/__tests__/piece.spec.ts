@@ -22,6 +22,12 @@ describe("PieceFactory", () => {
       expect(error).toBeDefined();
     }
   });
+  pieceColors.forEach((color) => {
+    it("should have a next piece preview method", () => {
+      const piece = PieceFactory.create(color);
+      expect(piece.nextPiecePreview).toBeDefined();
+    });
+  });
 });
 
 describe("Piece", () => {
