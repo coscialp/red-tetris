@@ -1,4 +1,5 @@
 import { io } from "socket.io-client";
+import { BACK_URL } from "../ip.ts";
 
 export enum SocketActionTypes {
   CONNECT = "socket/connect",
@@ -15,7 +16,7 @@ export const socketMiddleware = (store: any) => (next: any) => (action: any) => 
   switch (type) {
     case SocketActionTypes.CONNECT:
       if (!socket) {
-        setSocket(io(`ws://${import.meta.env.VITE_BACK_BASE_URL}:3001`, { transports: ['websocket'] }));
+        setSocket(io(`ws://${BACK_URL}:3001`, { transports: ['websocket'] }));
       }
       break;
     case SocketActionTypes.DISCONNECT:
