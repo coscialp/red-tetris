@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { BACK_URL } from "../ip.ts";
+import { BACK_URL } from "../utils/ip.ts";
 
 export enum SocketActionTypes {
   CONNECT = "socket/connect",

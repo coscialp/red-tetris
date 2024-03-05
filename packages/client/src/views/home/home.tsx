@@ -1,12 +1,13 @@
-import "./mainWindow.scss";
 import { useEffect, useState } from "react";
-import Tetris from "../components/tetris.tsx";
-import NextPiece from "../components/nextPiece/nextPiece.tsx";
-import Spectras from "../components/spectras/Spectras.tsx";
-import useHashRouter from "../hooks/useHashRouter.tsx";
+import Tetris from "../../components/tetris.tsx";
+import NextPiece from "../../components/nextPiece/nextPiece.tsx";
+import Spectras from "../../components/spectras/Spectras.tsx";
+import useHashRouter from "../../hooks/useHashRouter.tsx";
 import { useDispatch } from "react-redux";
-import { SocketActionTypes } from "../middlewares/socket.tsx";
-import { store } from "../stores";
+import { SocketActionTypes } from "../../middlewares/socket.tsx";
+import { store } from "../../stores";
+
+import "./home.scss";
 
 function Home() {
   const [hash] = useHashRouter();

@@ -18,11 +18,11 @@ export default {
   ],
   "testRegex": ".*\\.spec\\.tsx$",
   "transform": {
-    "^.+\\.(t|j)s(x)$": "ts-jest",
+    "^.+\\.(t|j)s(x|)$": "ts-jest",
     "^.+\\.scss$": "jest-scss-transform",
   },
   "collectCoverageFrom": [
-    "**/*.(t|j)s(x)",
+    "**/*.(t|j)s(x|)",
   ],
   "coverageDirectory": "../coverage",
 };

@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tetris Component renders board when grid is not empty 1`] = `
+<div>
+  <p>
+    Press Start to launch the game !
+  </p>
+</div>
+`;
