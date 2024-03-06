@@ -34,33 +34,36 @@ function Tetris({ me, owner, isPlaying }: { me: string, owner: string, isPlaying
     return chroma("#" + color).darken(0.4).hex();
   };
 
-  const handleKeyDown = (e: DocumentEventMap["keydown"]) => {
-    const key = e.key;
-    switch (key) {
-      case "ArrowUp":
-        dispatch({ type: SocketActionTypes.EMIT, event: "rotate", data: {} });
-        break;
-      case "ArrowDown":
-        dispatch({ type: SocketActionTypes.EMIT, event: "moveDown", data: {} });
-        break;
-      case "ArrowLeft":
-        dispatch({ type: SocketActionTypes.EMIT, event: "moveLeft", data: {} });
-        break;
-      case "ArrowRight":
-        dispatch({ type: SocketActionTypes.EMIT, event: "moveRight", data: {} });
-        break;
-      case " ":
-        dispatch({ type: SocketActionTypes.EMIT, event: "drop", data: {} });
-        break;
-    }
-  };
 
   useEffect(() => {
+    const handleKeyDown = (e: DocumentEventMap["keydown"]) => {
+      const key = e.key;
+      switch (key) {
+        case "ArrowUp":
+          dispatch({ type: SocketActionTypes.EMIT, event: "rotate", data: {} });
+          break;
+        case "ArrowDown":
+          dispatch({ type: SocketActionTypes.EMIT, event: "moveDown", data: {} });
+          break;
+        case "ArrowLeft":
+          dispatch({ type: SocketActionTypes.EMIT, event: "moveLeft", data: {} });
+          break;
+        case "ArrowRight":
+          dispatch({ type: SocketActionTypes.EMIT, event: "moveRight", data: {} });
+          break;
+        case " ":
+          dispatch({ type: SocketActionTypes.EMIT, event: "drop", data: {} });
+          break;
+      }
+    };
+
     if (isPlaying) {
       document.addEventListener("keydown", handleKeyDown, true);
+    } else {
+      document.removeEventListener("keydown", handleKeyDown, true);
     }
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown, true);
     };
 
   }, [isPlaying]);

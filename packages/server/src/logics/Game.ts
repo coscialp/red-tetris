@@ -25,7 +25,7 @@ class Game {
   }
 
   private defaultPiecePosition = () => {
-    return { x: 4, y: this._numberOfUnavailableLines - 1 };
+    return { x: 4, y: -1 };
   };
 
   public get nextPieceArray() {
@@ -56,9 +56,8 @@ class Game {
       (position) =>
         position.x >= 0 &&
         position.x < 10 &&
-        position.y < 20 &&
-        (position.y < this._numberOfUnavailableLines ||
-          this._board[position.y][position.x] === 0x0n),
+        position.y < 20 - this._numberOfUnavailableLines &&
+        (position.y < 0 || this._board[position.y][position.x] === 0x0n),
     );
   };
 
@@ -147,17 +146,13 @@ class Game {
 
   public increaseUnavailableLines = () => {
     this._numberOfUnavailableLines += 1;
-    this._board = this._board.map((row, index) => {
-      if (index < this._numberOfUnavailableLines) {
-        return row.map((cell) => {
-          if (cell !== 0x0n && cell !== 0x646464d9n) {
-            throw new Error("Game Over");
-          }
-          return 0x646464d9n;
-        });
+    this._board[0].forEach((cell) => {
+      if (cell !== 0x0n) {
+        throw new Error("Game Over");
       }
-      return row;
     });
+    this._board = this._board.slice(1, 20);
+    this._board.push(Array(10).fill(0x646464d9n));
   };
 
   public clearLines = (): number => {
@@ -168,30 +163,11 @@ class Game {
       return acc;
     }, [] as number[]);
 
-    if (lines.length !== 0) {
-      this._board = this._board.map((row) =>
-        row.map((cell) => {
-          if (cell === 0x646464d9n) {
-            return 0x0n;
-          }
-          return cell;
-        }),
-      );
+    lines.forEach((line) => {
+      this._board.splice(line, 1);
+      this._board.unshift(Array(10).fill(0x0n));
+    });
 
-      lines.forEach((line) => {
-        this._board.splice(line, 1);
-        this._board.unshift(Array(10).fill(0x0n));
-      });
-
-      this._board = this._board.map((row, index) => {
-        if (index < this._numberOfUnavailableLines) {
-          return row.map(() => {
-            return 0x646464d9n;
-          });
-        }
-        return row;
-      });
-    }
     return lines.length;
   };
 
