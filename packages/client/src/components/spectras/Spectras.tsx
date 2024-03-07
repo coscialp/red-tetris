@@ -21,14 +21,14 @@ const Spectras: FC<SpectrasProps> = ({ name, spectras }: SpectrasProps) => {
         {spectras?.map((spectra) => {
           if (spectra.name !== name) {
             return (
-              <div className={"spectra"}>
-                {spectra.map.map((row) => (
-                  <div className={"row"} style={{
+              <div className={"spectra"} key={"spectra-" + spectra.name}>
+                {spectra.map.map((row, index) => (
+                  <div className={"row"} key={"row-spectra-" + index} style={{
                     gridTemplateColumns: `repeat(${row.length}, 1fr)`,
                     height: `calc(100px / ${row.length})`,
                   }}>
-                    {row.map((cell) => (
-                      <div className={cell === "00000000" ? "cell empty" : "cell full"}
+                    {row.map((cell, idx) => (
+                      <div key={'cell-spectra-' + idx} className={cell === "00000000" ? "cell empty" : "cell full"}
                            style={cell !== "00000000" ? {
                              backgroundColor: `#${cell}`,
                              borderColor: `#${cell}`,
@@ -44,6 +44,6 @@ const Spectras: FC<SpectrasProps> = ({ name, spectras }: SpectrasProps) => {
       </div>
     </>
   );
-}
+};
 
 export default Spectras;

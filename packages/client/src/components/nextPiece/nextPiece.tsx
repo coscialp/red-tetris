@@ -11,13 +11,13 @@ function NextPiece({ nextPiece }: { nextPiece: string[][] }) {
   return (
     <>
       <div className={"next-piece"}>
-        {nextPiece.map((row) => (
-          <div className={"row"} style={{
+        {nextPiece.map((row, index) => (
+          <div key={"row-next-" + index} className={"row"} style={{
             gridTemplateColumns: `repeat(${row.length}, 1fr)`,
             height: `calc(100px / ${row.length})`,
           }}>
-            {row.map((cell) => (
-              <div className={cell === "00000000" ? "cell empty" : "cell full"}
+            {row.map((cell, idx) => (
+              <div key={"cell-next-" + idx} className={cell === "00000000" ? "cell empty" : "cell full"}
                    style={cell !== "00000000" ? { backgroundColor: `#${cell}`, borderColor: `#${cell}` } : {}} />
             ))}
           </div>

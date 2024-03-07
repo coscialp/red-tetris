@@ -32,10 +32,10 @@ const Tetris: FC<TetrisProps> = ({ grid, isOwner }: TetrisProps) => {
   return (
     <>
       <div className={"board"}>
-        {grid.map((row) => (
-          <div className={"row"}>
-            {row.map((cell) => (
-              <div className={cell === "00000000" ? "cell empty" : "cell full"} style={cell !== "00000000" ? {
+        {grid.map((row, index) => (
+          <div className={"row"} key={"row-" + index}>
+            {row.map((cell, idx) => (
+              <div key={"cell" + idx} className={cell === "00000000" ? "cell empty" : "cell full"} style={cell !== "00000000" ? {
                 backgroundColor: `${darkenColor(cell)}`,
                 borderColor: `#${cell}`,
               } : {}} />
