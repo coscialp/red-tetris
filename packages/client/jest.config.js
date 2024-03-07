@@ -30,5 +30,5 @@ export default {
   "collectCoverageFrom": [
     "**/*.(t|j)s(x|)",
   ],
-  "coverageDirectory": "../coverage",
+  "coverageDirectory": "../__coverage__",
 };

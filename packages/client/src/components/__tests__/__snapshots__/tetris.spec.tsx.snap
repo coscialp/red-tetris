@@ -2,8 +2,39 @@
 
 exports[`Tetris Component renders board when grid is not empty 1`] = `
 <div>
-  <p>
-    Press Start to launch the game !
-  </p>
+  <div
+    class="board"
+  >
+    <div
+      class="row"
+    >
+      <div
+        class="cell empty"
+      />
+      <div
+        class="cell full"
+        style="background-color: rgb(230, 0, 0); border-color: #ff0000ff;"
+      />
+      <div
+        class="cell full"
+        style="background-color: rgb(0, 234, 0); border-color: #00ff00ff;"
+      />
+    </div>
+    <div
+      class="row"
+    >
+      <div
+        class="cell empty"
+      />
+      <div
+        class="cell full"
+        style="background-color: rgb(0, 234, 0); border-color: #00ff00ff;"
+      />
+      <div
+        class="cell full"
+        style="background-color: rgb(230, 0, 0); border-color: #ff0000ff;"
+      />
+    </div>
+  </div>
 </div>
 `;

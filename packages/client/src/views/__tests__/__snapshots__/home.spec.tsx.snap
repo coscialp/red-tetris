@@ -71,9 +71,9 @@ exports[`Home matches snapshot 1`] = `
         </div>
       </div>
     </div>
-    <p>
-      Loading...
-    </p>
+    <div>
+      Connecting...
+    </div>
   </div>
 </DocumentFragment>
 `;

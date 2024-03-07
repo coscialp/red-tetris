@@ -1,4 +1,4 @@
 .idea
 node_modules
 .env
-coverage
+__coverage__

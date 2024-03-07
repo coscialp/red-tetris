@@ -7,8 +7,12 @@
     "build": "npm -w packages run build",
     "start": "npm -w packages/server run start",
     "build-and-start": "npm run build && npm run start",
-    "test:server": "npm -w packages/server run test",
-    "coverage": "npm -w packages/server run test:cov; npm -w packages/client run test:cov"
+    "coverage:server": "npm -w packages/server run test:cov",
+    "coverage:client": "npm -w packages/client run test:cov",
+    "coverage:all": "npm run coverage:server; npm run coverage:client",
+    "coverage:merge": "./merge-coverage.bash",
+    "coverage:report": "npx nyc report --temp-dir=__coverage__ --report-dir=__coverage__",
+    "coverage": "npm run coverage:all; npm run coverage:merge && npm run coverage:report"
   },
   "workspaces": [
     "packages/*"
@@ -18,6 +22,7 @@
     "@nestjs/platform-socket.io": "^10.3.3",
     "@nestjs/serve-static": "^4.0.0",
     "@nestjs/websockets": "^10.3.3",
+    "nyc": "^15.1.0",
     "react-router-dom": "^6.22.0",
     "sass": "^1.70.0",
     "socket.io": "^4.7.4",
