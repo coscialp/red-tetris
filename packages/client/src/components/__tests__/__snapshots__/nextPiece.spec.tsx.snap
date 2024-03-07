@@ -1,174 +1,156 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Spectras should render spectra 1`] = `
+exports[`NextPiece should render next piece 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
     <div />
     <div>
       <div
-        class="spectras"
+        class="next-piece"
       >
         <div
-          class="spectra"
+          class="row"
+          style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
         >
           <div
-            class="row"
-            style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
-          >
-            <div
-              class="cell empty"
-            />
-            <div
-              class="cell empty"
-            />
-            <div
-              class="cell empty"
-            />
-            <div
-              class="cell empty"
-            />
-          </div>
+            class="cell empty"
+          />
           <div
-            class="row"
-            style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
-          >
-            <div
-              class="cell empty"
-            />
-            <div
-              class="cell full"
-            />
-            <div
-              class="cell empty"
-            />
-            <div
-              class="cell empty"
-            />
-          </div>
+            class="cell empty"
+          />
           <div
-            class="row"
-            style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
-          >
-            <div
-              class="cell empty"
-            />
-            <div
-              class="cell empty"
-            />
-            <div
-              class="cell full"
-            />
-            <div
-              class="cell empty"
-            />
-          </div>
+            class="cell empty"
+          />
           <div
-            class="row"
-            style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
-          >
-            <div
-              class="cell empty"
-            />
-            <div
-              class="cell empty"
-            />
-            <div
-              class="cell empty"
-            />
-            <div
-              class="cell empty"
-            />
-          </div>
+            class="cell empty"
+          />
+        </div>
+        <div
+          class="row"
+          style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
+        >
           <div
-            class="spectra-username"
-          >
-            name1
-          </div>
+            class="cell empty"
+          />
+          <div
+            class="cell full"
+          />
+          <div
+            class="cell empty"
+          />
+          <div
+            class="cell empty"
+          />
+        </div>
+        <div
+          class="row"
+          style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
+        >
+          <div
+            class="cell empty"
+          />
+          <div
+            class="cell empty"
+          />
+          <div
+            class="cell full"
+          />
+          <div
+            class="cell empty"
+          />
+        </div>
+        <div
+          class="row"
+          style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
+        >
+          <div
+            class="cell empty"
+          />
+          <div
+            class="cell empty"
+          />
+          <div
+            class="cell empty"
+          />
+          <div
+            class="cell empty"
+          />
         </div>
       </div>
     </div>
   </body>,
   "container": <div>
     <div
-      class="spectras"
+      class="next-piece"
     >
       <div
-        class="spectra"
+        class="row"
+        style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
       >
         <div
-          class="row"
-          style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
-        >
-          <div
-            class="cell empty"
-          />
-          <div
-            class="cell empty"
-          />
-          <div
-            class="cell empty"
-          />
-          <div
-            class="cell empty"
-          />
-        </div>
+          class="cell empty"
+        />
         <div
-          class="row"
-          style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
-        >
-          <div
-            class="cell empty"
-          />
-          <div
-            class="cell full"
-          />
-          <div
-            class="cell empty"
-          />
-          <div
-            class="cell empty"
-          />
-        </div>
+          class="cell empty"
+        />
         <div
-          class="row"
-          style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
-        >
-          <div
-            class="cell empty"
-          />
-          <div
-            class="cell empty"
-          />
-          <div
-            class="cell full"
-          />
-          <div
-            class="cell empty"
-          />
-        </div>
+          class="cell empty"
+        />
         <div
-          class="row"
-          style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
-        >
-          <div
-            class="cell empty"
-          />
-          <div
-            class="cell empty"
-          />
-          <div
-            class="cell empty"
-          />
-          <div
-            class="cell empty"
-          />
-        </div>
+          class="cell empty"
+        />
+      </div>
+      <div
+        class="row"
+        style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
+      >
         <div
-          class="spectra-username"
-        >
-          name1
-        </div>
+          class="cell empty"
+        />
+        <div
+          class="cell full"
+        />
+        <div
+          class="cell empty"
+        />
+        <div
+          class="cell empty"
+        />
+      </div>
+      <div
+        class="row"
+        style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
+      >
+        <div
+          class="cell empty"
+        />
+        <div
+          class="cell empty"
+        />
+        <div
+          class="cell full"
+        />
+        <div
+          class="cell empty"
+        />
+      </div>
+      <div
+        class="row"
+        style="grid-template-columns: repeat(4, 1fr); height: calc(100px / 4);"
+      >
+        <div
+          class="cell empty"
+        />
+        <div
+          class="cell empty"
+        />
+        <div
+          class="cell empty"
+        />
+        <div
+          class="cell empty"
+        />
       </div>
     </div>
   </div>,
