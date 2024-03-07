@@ -1,9 +1,8 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import Tetris from "../tetris"; // Update the path accordingly
 import { Provider } from "react-redux";
 // @ts-ignore
 import configureStore from "redux-mock-store";
-import { SocketActionTypes } from "../../middlewares/socket";
 
 const mockStore = configureStore([]);
 
@@ -19,7 +18,7 @@ describe("Tetris Component", () => {
 
     render(
       <Provider store={store}>
-        <Tetris me="player1" owner="player2" isPlaying={false} />
+        <Tetris isOwner={false} grid={[]} />
       </Provider>,
     );
 
@@ -37,7 +36,7 @@ describe("Tetris Component", () => {
 
     render(
       <Provider store={store}>
-        <Tetris me="player1" owner="player1" isPlaying={false} />
+        <Tetris isOwner={true} grid={[]} />
       </Provider>,
     );
 
@@ -63,23 +62,10 @@ describe("Tetris Component", () => {
     act(() => {
       tetris = render(
         <Provider store={store}>
-          <Tetris me="player1" owner="player1" isPlaying={true} />
+          <Tetris isOwner={true} grid={mockGrid} />
         </Provider>,
       );
     });
-
-    // Mock the 'previewBoard' event
-    fireEvent(
-      window,
-      new MessageEvent("previewBoard", {
-        data: JSON.stringify({
-          event: SocketActionTypes.ON,
-          data: { board: mockGrid },
-        }),
-      }),
-    );
-
-    tetris!.board = mockGrid;
 
     // Use 'container' to check the rendered structure
     expect(tetris!.container).toMatchSnapshot();

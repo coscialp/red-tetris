@@ -1,19 +1,7 @@
-import { useState } from "react";
 import "./nextPiece.scss";
-import { useDispatch } from "react-redux";
-import { SocketActionTypes } from "../../middlewares/socket.tsx";
 
-function NextPiece() {
-  const dispatch = useDispatch();
-  const [nextPiece, setNextPiece] = useState<string[][]>();
-
-  dispatch({
-    type: SocketActionTypes.ON, event: "nextPiece", callback: (data: { nextPiece: string[][] }) => {
-      setNextPiece(data.nextPiece);
-    },
-  });
-
-  if (!nextPiece || nextPiece.length === 0) {
+function NextPiece({ nextPiece }: { nextPiece: string[][] }) {
+  if (nextPiece.length === 0) {
     return (
       <>
       </>

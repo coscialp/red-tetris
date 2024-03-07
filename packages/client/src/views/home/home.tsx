@@ -1,16 +1,14 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Tetris from "../../components/tetris.tsx";
 import NextPiece from "../../components/nextPiece/nextPiece.tsx";
 import Spectras from "../../components/spectras/Spectras.tsx";
 import useHashRouter from "../../hooks/useHashRouter.tsx";
 import { useDispatch } from "react-redux";
 import { SocketActionTypes } from "../../middlewares/socket.tsx";
-import { store } from "../../stores";
 import { toast, ToastContainer } from "react-toastify";
 
-import "react-toastify/dist/ReactToastify.css";
-
 import "./home.scss";
+import { store } from "../../stores";
 
 function Home() {
   const [hash] = useHashRouter();
@@ -21,6 +19,19 @@ function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [startLabel, setStartLabel] = useState("Start");
   const [error, setError] = useState("");
+  const [grid, setGrid] = useState<string[][]>([]);
+  const [isWinner, setIsWinner] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [nextPiece, setNextPiece] = useState<string[][]>([]);
+  const [spectras, setSpectras] = useState<{ name: string, map: string[][] }[]>([]);
+
+  const resetGame = () => {
+    setError("");
+    setGrid([]);
+    setNextPiece([]);
+    setSpectras([]);
+  }
+
   const notify = (errorMsg: string) => toast.error(errorMsg, {
     position: "top-right",
     autoClose: 5000,
@@ -34,6 +45,7 @@ function Home() {
 
 
   useEffect(() => {
+    resetGame();
     const regex = /#(\w+)\[(\w+)]/;
     const matches = hash.match(regex);
 
@@ -41,11 +53,14 @@ function Home() {
       setRoom(matches[1]);
       setUsername(matches[2]);
 
+      if (store.getState().rootReducer.socket !== null) {
+        dispatch({ type: SocketActionTypes.DISCONNECT });
+      }
       dispatch({ type: SocketActionTypes.CONNECT });
     } else {
       setError("Invalid URL");
     }
-  }, [hash]);
+  }, [hash, dispatch]);
 
   useEffect(() => {
     if (error) {
@@ -53,6 +68,45 @@ function Home() {
       setError("");
     }
   }, [error]);
+
+  const handleKeyDown = useCallback((e: DocumentEventMap["keydown"]) => {
+    const key = e.key;
+    switch (key) {
+      case "ArrowUp":
+        dispatch({ type: SocketActionTypes.EMIT, event: "rotate", data: {} });
+        break;
+      case "ArrowDown":
+        dispatch({ type: SocketActionTypes.EMIT, event: "moveDown", data: {} });
+        break;
+      case "ArrowLeft":
+        dispatch({ type: SocketActionTypes.EMIT, event: "moveLeft", data: {} });
+        break;
+      case "ArrowRight":
+        dispatch({ type: SocketActionTypes.EMIT, event: "moveRight", data: {} });
+        break;
+      case " ":
+        dispatch({ type: SocketActionTypes.EMIT, event: "drop", data: {} });
+        break;
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (isWinner || isGameOver) {
+      document.removeEventListener("keydown", handleKeyDown, true);
+    }
+  }, [isWinner, isGameOver, handleKeyDown]);
+
+  useEffect(() => {
+    if (isPlaying) {
+      setIsWinner(false);
+      setIsGameOver(false);
+      document.addEventListener("keydown", handleKeyDown, true);
+    }
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown, true);
+    };
+
+  }, [isPlaying, handleKeyDown]);
 
   if (store.getState().rootReducer.socket === null) {
     return (
@@ -65,7 +119,7 @@ function Home() {
         }
       }>
         <ToastContainer />
-        <p>Loading...</p>
+        <div>Connecting...</div>
       </div>
     );
   }
@@ -99,6 +153,9 @@ function Home() {
 
   dispatch({
     type: SocketActionTypes.ON, event: "gameStatus", callback: (data: { status: string }) => {
+      if (data.status === "playing" && !isPlaying) {
+        toast.dismiss();
+      }
       setIsPlaying(data.status === "playing");
     },
   });
@@ -106,7 +163,7 @@ function Home() {
   dispatch({
     type: SocketActionTypes.ON, event: "gameFinished", callback: () => {
       setIsPlaying(false);
-      setError("");
+      resetGame();
       setStartLabel("Restart");
     },
   });
@@ -124,19 +181,61 @@ function Home() {
     },
   });
 
+  dispatch({
+    type: SocketActionTypes.ON, event: "previewBoard", callback: (data: { board: string[][] }) => {
+      setGrid(data.board);
+    },
+  });
+
+  dispatch({
+    type: SocketActionTypes.ON, event: "gameOver", callback: () => {
+      setIsGameOver(true);
+    },
+  });
+
+  dispatch({
+    type: SocketActionTypes.ON, event: "winner", callback: () => {
+      setIsWinner(true);
+      resetGame();
+    },
+  });
+
+  dispatch({
+    type: SocketActionTypes.ON, event: "nextPiece", callback: (data: { nextPiece: string[][] }) => {
+      setNextPiece(data.nextPiece);
+    },
+  });
+
+  dispatch({
+    type: SocketActionTypes.ON, event: "spectraBoard", callback: (data: { name: string, map: string[][] }[]) => {
+      setSpectras(data);
+    },
+  });
+
+  const handleStartGame = () => {
+    dispatch({ type: SocketActionTypes.EMIT, event: "startGame", data: {} });
+  };
+
   return (
     <>
       <ToastContainer />
       <div className={"main-window"}>
         {
-          !isPlaying && owner === username ? <button className={"btn-start"} onClick={() => {
-            dispatch({ type: SocketActionTypes.EMIT, event: "startGame", data: {} });
-          }}>{startLabel}</button> : <div></div>
+          !isPlaying && owner === username ?
+            <button className={"btn-start"} onClick={handleStartGame}>{startLabel}</button> : <div></div>
         }
-        <Tetris me={username} owner={owner} isPlaying={isPlaying} />
+        {isWinner ? <h1 style={{
+          color: "green",
+          fontSize: "3em",
+        }}>You win !</h1> : null}
+        {isGameOver ? <h1 style={{
+          color: "red",
+          fontSize: "3em",
+        }}>Game Over</h1> : null}
+        <Tetris isOwner={username === owner} grid={grid} />
         <div className={"right-panel"}>
-          <NextPiece />
-          <Spectras name={username} />
+          <NextPiece nextPiece={nextPiece} />
+          <Spectras name={username} spectras={spectras} />
         </div>
       </div>
     </>

@@ -29,13 +29,15 @@ describe("socketMiddleware", () => {
     const socketMock: Partial<Socket> = {
       disconnect: jest.fn(),
     };
-    store.getState = jest.fn(() => ({ rootReducer: { socket: socketMock } }));
+    const resetSocketMock = jest.fn();
+    store.getState = jest.fn(() => ({ rootReducer: { socket: socketMock, resetSocket: resetSocketMock } }));
     const action = { type: SocketActionTypes.DISCONNECT };
 
     socketMiddleware(store)(next)(action);
 
     // Verify that socket.disconnect was called
     expect(socketMock.disconnect).toHaveBeenCalled();
+    expect(resetSocketMock).toHaveBeenCalled();
   });
 
   it("should handle SocketActionTypes.EMIT", () => {

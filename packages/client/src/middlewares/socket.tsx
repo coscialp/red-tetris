@@ -11,7 +11,7 @@ export enum SocketActionTypes {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const socketMiddleware = (store: any) => (next: any) => (action: any) => {
   const { type } = action;
-  const { socket, setSocket } = store.getState().rootReducer;
+  const { socket, setSocket, resetSocket } = store.getState().rootReducer;
 
   switch (type) {
     case SocketActionTypes.CONNECT:
@@ -22,6 +22,7 @@ export const socketMiddleware = (store: any) => (next: any) => (action: any) => 
     case SocketActionTypes.DISCONNECT:
       if (socket) {
         socket.disconnect();
+        resetSocket();
       }
       break;
     case SocketActionTypes.EMIT:

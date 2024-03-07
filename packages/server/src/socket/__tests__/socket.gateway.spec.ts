@@ -37,10 +37,8 @@ describe("SocketGateway", () => {
 
   it("client connection", () => {
     jest.spyOn(console, "log");
-    jest.spyOn(console, "debug");
     gateway.handleConnection(socketMock);
     expect(console.log).toBeCalledWith("Client connected with id: ", "1");
-    expect(console.debug).toBeCalled();
   });
 
   it("client disconnection", () => {

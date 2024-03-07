@@ -9,6 +9,9 @@ export const store = configureStore({
     rootReducer: (state = {
       // Add initial state here
       socket: null,
+      resetSocket: () => {
+        state.socket = null;
+      },
       setSocket: (socket: Socket) => {
         state.socket = socket;
       }

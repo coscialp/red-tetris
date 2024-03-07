@@ -116,6 +116,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         console.log(
           `Client ${body.username} can't join a user with same username is already in game`,
         );
+        throw new WsException("Username already in use");
       }
     }
     if (isValid) {
@@ -201,6 +202,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     let players = Array.from(this._clients.values()).filter(
       (player) => player.room === currentPlayer.room,
     );
+    const isSoloGame = players.length === 1;
     players.forEach((player) => {
       player.startGame(
         new Game(
@@ -219,12 +221,20 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     while (true) {
       if (players.length === 0) {
         socket.emit("gameFinished");
-        this._rooms.get(currentPlayer.room).status = "waiting";
+        try {
+          this._rooms.get(currentPlayer.room).status = "waiting";
+        } catch {
+          /* Do nothing */
+        }
         console.log("Game finished");
         return;
       }
       const mapBoard = [];
       for (const player of players) {
+        if (!this._clients.has(player.socket.id)) {
+          players = players.filter((p) => p.name !== player.name);
+          continue;
+        }
         let playerToRemove: Player = null;
         const previewString = player.game.spectra.map((row) =>
           row.map((cell) => {
@@ -255,13 +265,21 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
             nextPiece: player.game.nextPiece.nextPiecePreview,
           });
         }
-        if (player.game.isGameOver() && players.length === 1) {
-          player.socket.emit("winner");
-          playerToRemove = player;
-        } else if (player.game.isGameOver()) {
+        if (player.game.isGameOver()) {
           player.socket.emit("gameOver");
           playerToRemove = player;
         }
+
+        if (!isSoloGame && players.length === 1) {
+          players[0].socket.emit("winner");
+          players[0].endGame();
+          console.log(
+            "Player " + players[0].name + " is the winner of the game",
+          );
+          players = players.filter((p) => p.name !== players[0].name);
+          continue;
+        }
+
         if (playerToRemove) {
           playerToRemove.endGame();
           console.log("Player " + playerToRemove.name + " is out of the game");
