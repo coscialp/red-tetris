@@ -162,24 +162,14 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return colorString;
       }),
     );
+    console.log("Game status: ", this._rooms.get(player.room).status);
+    player.socket.emit("gameStatus", {
+      status: this._rooms.get(player.room).status,
+    });
     player.socket.emit("previewBoard", {
       board: previewString,
     });
   };
-
-  @SubscribeMessage("getGameStatus")
-  handleGetGameStatus(@ConnectedSocket() socket: Socket): void {
-    const player = this._clients.get(socket.id);
-    try {
-      socket.emit("gameStatus", {
-        status: this._rooms.get(player.room).status,
-      });
-    } catch (error) {
-      socket.emit("gameStatus", {
-        status: "waiting",
-      });
-    }
-  }
 
   @SubscribeMessage("startGame")
   async handleStartGame(@ConnectedSocket() socket: Socket): Promise<void> {
@@ -195,6 +185,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new WsException("You are not the owner of the room");
     }
 
+    delete this._rooms.get(currentPlayer.room).pieces;
     this._rooms.get(currentPlayer.room).pieces = PieceFactory.createBagPieces();
 
     this._rooms.get(currentPlayer.room).status = "playing";
@@ -210,6 +201,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
           this._rooms.get(currentPlayer.room).pieces[1],
         ),
       );
+      player.socket.emit("gameStatus", {
+        status: this._rooms.get(player.room).status,
+      });
       player.socket.emit("nextPiece", {
         nextPiece: player.game.nextPiece.nextPiecePreview,
       });
@@ -248,7 +242,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         if (
           this._rooms.get(currentPlayer.room).pieces &&
           player.game.nbPiecePlaced >=
-            this._rooms.get(currentPlayer.room).pieces.length / 2
+            this._rooms.get(currentPlayer.room).pieces.length - 3
         ) {
           this._rooms.get(currentPlayer.room).pieces = this._rooms
             .get(currentPlayer.room)

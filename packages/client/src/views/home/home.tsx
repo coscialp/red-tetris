@@ -26,6 +26,7 @@ function Home() {
   const [spectras, setSpectras] = useState<{ name: string, map: string[][] }[]>([]);
 
   const resetGame = () => {
+    setIsPlaying(false);
     setError("");
     setGrid([]);
     setNextPiece([]);
@@ -65,6 +66,7 @@ function Home() {
   useEffect(() => {
     if (error) {
       notify(error);
+      console.error(error);
       setError("");
     }
   }, [error]);
@@ -108,6 +110,89 @@ function Home() {
 
   }, [isPlaying, handleKeyDown]);
 
+  useEffect(() => {
+    if (store.getState().rootReducer.socket !== null) {
+      dispatch({
+        type: SocketActionTypes.ON, event: "joined", callback: (data: { room: { owner: string } }) => {
+          setOwner(data.room.owner);
+        },
+      });
+
+      dispatch({
+        type: SocketActionTypes.ON, event: "connect", callback: () => {
+          console.log("Connected to server");
+          if (room && username) {
+            console.log("Joining room #" + room + " with username " + username);
+            dispatch({ type: SocketActionTypes.EMIT, event: "join", data: { room, username } });
+          }
+        },
+      });
+
+      dispatch({
+        type: SocketActionTypes.ON, event: "disconnect", callback: () => {
+          console.log("Disconnected from server");
+        },
+      });
+
+      dispatch({
+        type: SocketActionTypes.ON, event: "gameStatus", callback: (data: { status: string }) => {
+          setIsPlaying(data.status === "playing");
+        },
+      });
+
+      dispatch({
+        type: SocketActionTypes.ON, event: "gameFinished", callback: () => {
+          resetGame();
+          setStartLabel("Restart");
+        },
+      });
+
+      dispatch({
+        type: SocketActionTypes.ON, event: "newOwner", callback: (data: { owner: string }) => {
+          setOwner(data.owner);
+        },
+      });
+
+      dispatch({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        type: SocketActionTypes.ON, event: "error", callback: (error: any) => {
+          setError(error.error.details.message);
+        },
+      });
+
+      dispatch({
+        type: SocketActionTypes.ON, event: "previewBoard", callback: (data: { board: string[][] }) => {
+          setGrid(data.board);
+        },
+      });
+
+      dispatch({
+        type: SocketActionTypes.ON, event: "gameOver", callback: () => {
+          setIsGameOver(true);
+        },
+      });
+
+      dispatch({
+        type: SocketActionTypes.ON, event: "winner", callback: () => {
+          setIsWinner(true);
+          resetGame();
+        },
+      });
+
+      dispatch({
+        type: SocketActionTypes.ON, event: "nextPiece", callback: (data: { nextPiece: string[][] }) => {
+          setNextPiece(data.nextPiece);
+        },
+      });
+
+      dispatch({
+        type: SocketActionTypes.ON, event: "spectraBoard", callback: (data: { name: string, map: string[][] }[]) => {
+          setSpectras(data);
+        },
+      });
+    }
+  }, [room, username, dispatch]);
+
   if (store.getState().rootReducer.socket === null) {
     return (
       <div style={
@@ -123,95 +208,6 @@ function Home() {
       </div>
     );
   }
-
-  setInterval(() => {
-    dispatch({ type: SocketActionTypes.EMIT, event: "getGameStatus", data: {} });
-  }, 1000);
-
-
-  dispatch({
-    type: SocketActionTypes.ON, event: "joined", callback: (data: { room: { owner: string } }) => {
-      setOwner(data.room.owner);
-    },
-  });
-
-  dispatch({
-    type: SocketActionTypes.ON, event: "connect", callback: () => {
-      console.log("Connected to server");
-      if (room && username) {
-        console.log("Joining room #" + room + " with username " + username);
-        dispatch({ type: SocketActionTypes.EMIT, event: "join", data: { room, username } });
-      }
-    },
-  });
-
-  dispatch({
-    type: SocketActionTypes.ON, event: "disconnect", callback: () => {
-      console.log("Disconnected from server");
-    },
-  });
-
-  dispatch({
-    type: SocketActionTypes.ON, event: "gameStatus", callback: (data: { status: string }) => {
-      if (data.status === "playing" && !isPlaying) {
-        toast.dismiss();
-      }
-      setIsPlaying(data.status === "playing");
-    },
-  });
-
-  dispatch({
-    type: SocketActionTypes.ON, event: "gameFinished", callback: () => {
-      setIsPlaying(false);
-      resetGame();
-      setStartLabel("Restart");
-    },
-  });
-
-  dispatch({
-    type: SocketActionTypes.ON, event: "newOwner", callback: (data: { owner: string }) => {
-      setOwner(data.owner);
-    },
-  });
-
-  dispatch({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    type: SocketActionTypes.ON, event: "error", callback: (error: any) => {
-      setError(error.error.details.message);
-    },
-  });
-
-  dispatch({
-    type: SocketActionTypes.ON, event: "previewBoard", callback: (data: { board: string[][] }) => {
-      setGrid(data.board);
-    },
-  });
-
-  dispatch({
-    type: SocketActionTypes.ON, event: "gameOver", callback: () => {
-      setIsGameOver(true);
-    },
-  });
-
-  dispatch({
-    type: SocketActionTypes.ON, event: "winner", callback: () => {
-      setIsWinner(true);
-      resetGame();
-    },
-  });
-
-  dispatch({
-    type: SocketActionTypes.ON, event: "nextPiece", callback: (data: { nextPiece: string[][] }) => {
-      setNextPiece(data.nextPiece);
-    },
-  });
-
-  dispatch({
-    type: SocketActionTypes.ON, event: "spectraBoard", callback: (data: { name: string, map: string[][] }[]) => {
-      setSpectras(data);
-    },
-  });
-
   const handleStartGame = () => {
     dispatch({ type: SocketActionTypes.EMIT, event: "startGame", data: {} });
   };

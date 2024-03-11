@@ -41,6 +41,9 @@ class Game {
   }
 
   public set nextPiece(piece: Piece) {
+    if (this._nextPiece) {
+      delete this._nextPiece;
+    }
     this._nextPiece = piece.clone();
   }
 
@@ -120,6 +123,7 @@ class Game {
       this._board[position.y][position.x] = this._currentPiece.color;
     });
     this._nbPiecePlaced += 1;
+    delete this._currentPiece;
     this._currentPiece = this._nextPiece!;
     this._nextPiece = null;
     this._currentPiecePosition = this.defaultPiecePosition();
